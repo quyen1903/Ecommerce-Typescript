@@ -1,14 +1,17 @@
 import Key,{ IKeyToken } from "../models/keytoken.model";
 
 class KeyTokenService{
-    static async createKeyToken ({ user, publicKey, refreshToken }: Partial<IKeyToken>){
+
+    static createKeyToken = async ({userId, publicKey, refreshToken}:Partial<IKeyToken>)=>{
         try {
-            const tokens = await Key.create({
-                user,
-                publicKey,
-                refreshToken: refreshToken || []
-            })
-            return tokens ? publicKey : null
+            const filter = {userId:userId},
+            replacement = {
+                publicKey,refreshTokensUsed:[],refreshToken
+            },
+            options = {upsert:true,new:true}
+
+            const tokens = await Key.findOneAndUpdate(filter,replacement,options);
+            return tokens ? tokens.publicKey : null
         } catch (error) {
             return error
         }

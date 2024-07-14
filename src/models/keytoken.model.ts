@@ -1,9 +1,9 @@
 import { model, Schema, Document, Types }  from "mongoose";
 
 export interface IKeyToken extends Document{
-    user: Types.ObjectId,
+    userId: Types.ObjectId,
     publicKey: string,
-    refreshToken: string[]
+    refreshToken: string
 }
 
 const DOCUMENT_NAME='Key'
@@ -12,7 +12,7 @@ const COLLECTION_NAME='Keys'
 
 
 const keyTokenSchema:Schema =new Schema<IKeyToken>({
-    user:{
+    userId:{
         type: Schema.Types.ObjectId,
         required:true,
         ref:'Shop'
@@ -22,8 +22,8 @@ const keyTokenSchema:Schema =new Schema<IKeyToken>({
         required:true,
     },
     refreshToken: {
-        type: [String],
-        default: []
+        type:String,
+        required:true
     }
 
 },{

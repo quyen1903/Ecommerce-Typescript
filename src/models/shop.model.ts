@@ -1,4 +1,3 @@
-import { Buffer } from 'node:buffer'
 import{model,Schema,Types} from'mongoose';
 
 const DOCUMENT_NAME='Shop'
@@ -13,7 +12,7 @@ export enum RoleShop{
 
 export interface IShop extends Document{
     name: string,
-    salt: Buffer,
+    salt: string,
     email: string,
     password: string,
     status: 'active' | 'inactive'
@@ -23,7 +22,7 @@ export interface IShop extends Document{
 // Declare the Schema of the Mongo model
 const shopSchema: Schema = new Schema<IShop>({
     name:{ type:String, trim:true, maxLength:150 },
-    salt:{ type:Buffer, required:true },
+    salt:{ type:String, required:true },
     email:{ type:String, unique:true, trim:true },
     password:{ type:String, required:true },
     status:{ type:String, enum:['active','inactive'], default:'inactive'},

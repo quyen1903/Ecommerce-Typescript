@@ -4,6 +4,12 @@ import { OK, CREATED, SuccessResponse } from '../core/success.response'
 import { BadRequestError } from '../core/error.response';
 
 class AccessController{
+    login = async(req: Request, res: Response, next: NextFunction)=>{
+        new SuccessResponse({
+            message: 'login success',
+            metadata:await AccessService.login(req.body)
+        }).send(res)
+    }
     register = async (req: Request, res: Response, next: NextFunction) => {
         new SuccessResponse({
             message: 'register success',
