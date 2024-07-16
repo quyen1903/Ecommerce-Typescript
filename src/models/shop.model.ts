@@ -11,13 +11,14 @@ export enum RoleShop{
 }
 
 export interface IShop extends Document{
-    name: string,
-    salt: string,
-    email: string,
-    password: string,
-    status: 'active' | 'inactive'
-    verify: boolean,
-    roles?: RoleShop
+    _id:Types.ObjectId;
+    name: string;
+    salt: string;
+    email: string;
+    password: string;
+    status: 'active' | 'inactive';
+    verify: boolean;
+    roles?: RoleShop;
 };
 // Declare the Schema of the Mongo model
 const shopSchema: Schema = new Schema<IShop>({

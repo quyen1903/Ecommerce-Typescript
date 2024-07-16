@@ -1,9 +1,15 @@
 import { Request, Response, NextFunction } from 'express'; 
 import AccessService from "../services/access.service"
-import { OK, CREATED, SuccessResponse } from '../core/success.response'
-import { BadRequestError } from '../core/error.response';
+import { SuccessResponse } from '../core/success.response'
+
 
 class AccessController{
+    logout = async(req: Request, res: Response, next: NextFunction)=>{
+        new SuccessResponse({
+            message:'logout success',
+            metadata:await AccessService.logout( req.keyStore )
+        }).send(res)
+    }
     login = async(req: Request, res: Response, next: NextFunction)=>{
         new SuccessResponse({
             message: 'login success',

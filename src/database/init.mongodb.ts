@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import config from "../configs/config.mongodb"
-
+import CheckConnect from "../helper/check.connect";
 const { host, port, name } = config.db;
 const connectString = `mongodb://${host}:${port}/${name}`
 
@@ -18,7 +18,7 @@ class Database{
         mongoose.connect(connectString,{
             maxPoolSize:50
         })
-        .then( _=>console.log('connected mongodb success pro'))
+        .then( _=>console.log('connected mongodb success pro'),CheckConnect.countConnect)
         .catch(err=>console.log(`Err connect!`))
     }
 

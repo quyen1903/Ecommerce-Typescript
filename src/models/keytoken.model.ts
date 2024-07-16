@@ -1,9 +1,10 @@
 import { model, Schema, Document, Types }  from "mongoose";
 
 export interface IKeyToken extends Document{
-    userId: Types.ObjectId,
-    publicKey: string,
-    refreshToken: string
+    _id:Types.ObjectId;
+    userId: Types.ObjectId;
+    publicKey: string;
+    refreshToken: string;
 }
 
 const DOCUMENT_NAME='Key'

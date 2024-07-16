@@ -6,6 +6,7 @@ import morgan from "morgan";
 
 import instanceMongodb from "./database/init.mongodb";
 import router from './routes';
+import CheckConnect from './helper/check.connect';
 
 const app: Express = express();
 
@@ -20,6 +21,9 @@ app.use(express.urlencoded({
 
 /* init mongodb */
 instanceMongodb;
+
+/* check for database connection */
+// CheckConnect.checkOverload()
 
 // init routes
 app.use('/',router);
