@@ -2,8 +2,17 @@ import { Request, Response, NextFunction } from 'express';
 import AccessService from "../services/access.service"
 import { SuccessResponse } from '../core/success.response'
 
-
 class AccessController{
+    handlerRefreshToken = async(req: Request, res: Response, next: NextFunction)=>{
+        new SuccessResponse({
+            message:'get token success',
+            metadata:await AccessService.handleRefreshToken(
+                req.keyStore,
+                req.user,
+                req.refreshToken,
+            )
+        }).send(res)
+    }
     logout = async(req: Request, res: Response, next: NextFunction)=>{
         new SuccessResponse({
             message:'logout success',

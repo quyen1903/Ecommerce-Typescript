@@ -40,7 +40,7 @@ class KeyTokenService{
         return await Key.findOne({refreshToken})
     }
 
-    static deleteKeyById = async(userId: string)=>{
+    static deleteKeyByUserId = async(userId: Types.ObjectId)=>{
         return await Key.deleteMany({userId:userId})
     }
 }

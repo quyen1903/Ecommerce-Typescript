@@ -5,7 +5,6 @@ import asyncHandler from '../helper/async.handler'
 import { Request, Response, NextFunction } from 'express'
 import { AuthFailureError, NotFoundError } from '../core/error.response'
 import  KeyTokenService  from '../services/keyToken.service'
-import KeyToken, { IKeyToken } from '../models/keytoken.model';
 
 const HEADER ={
     API_KEY : 'x-api-key',
@@ -14,11 +13,10 @@ const HEADER ={
     REFRESHTOKEN:'x-rtoken-id',
 }
 
-export const createTokenPair = async(payload: {
+const createTokenPair = async(payload: {
         userId: Types.ObjectId,
         email: string
-    }, 
-    publicKey: string, privateKey: string)=>{
+    }, publicKey: string, privateKey: string)=>{
     try {
         const accessToken =  JWT.sign(payload,privateKey,{
             expiresIn:'2 days',
@@ -44,37 +42,42 @@ export const createTokenPair = async(payload: {
     }
 }
 
-export interface IdecodeUser{
-    userId:string,
-    email?: string,
+interface IdecodeUser{
+    userId:Types.ObjectId,
+    email: string,
     iat: number,
     exp: number
 }
 
-export const authentication = asyncHandler(async(req:Request, res: Response, next: NextFunction)=>{
-        /* 
-        1 - check userId misssing
-        2 - get acccess token
-        3 - verify Token
-        4 - check user in database
-        5 - check keyStore with this userId
-        6 - OK => return next()
+const authentication = asyncHandler(async(req:Request, res: Response, next: NextFunction)=>{
+    /* 
+    1 - check userId misssing
+    2 - check keytoken referencing to currently userId
+
+    3   - if refresh token existed, check user in database
+    3.1 - extends request header with keytoken, userId and refreshtoken
+    3.2 - OK => return next()
+
+    4   - get acccess token, check user in database
+    4.1 - extends request header with keytoken, userId
+    4.2 - OK => return next()
+
     */
+
     //1
     const userId = req.headers[HEADER.CLIENT_ID] as string
-    if(!userId) throw new AuthFailureError('Invalid Request')
+    if(!userId) throw new AuthFailureError('Invalid Request, missing client ID')    
 
     //2
     const keyStore = await KeyTokenService.findByUserId(userId)
     if(!keyStore) throw new NotFoundError('Not Found Keystore')
-    console.log('this is keystore: ',keyStore)
 
     //3
     if(req.headers[HEADER.REFRESHTOKEN]){
         try {
             const refreshToken = req.headers[HEADER.REFRESHTOKEN] as string
             const decodeUser = JWT.verify(refreshToken ,keyStore.publicKey) as IdecodeUser
-            if(userId !== decodeUser.userId ) throw new AuthFailureError('Invalid User Id')
+            if(userId !== decodeUser.userId.toString() ) throw new AuthFailureError('Invalid User Id')
             req.keyStore = keyStore
             req.user = decodeUser
             req.refreshToken = refreshToken
@@ -84,12 +87,13 @@ export const authentication = asyncHandler(async(req:Request, res: Response, nex
         }
     }
 
+    //4
     const accessToken = req.headers[HEADER.AUTHORIZATION] as string
     if(!accessToken) throw new AuthFailureError('Invalid Request')
 
     try {
         const decodeUser = JWT.verify(accessToken,keyStore.publicKey) as IdecodeUser
-        if(userId !== decodeUser.userId) throw new AuthFailureError('Invalid User Id');
+        if( userId !== decodeUser.userId.toString() ) throw new AuthFailureError('Invalid User Id');
         req.keyStore = keyStore
         req.user = decodeUser
         return next()
@@ -97,3 +101,14 @@ export const authentication = asyncHandler(async(req:Request, res: Response, nex
         throw error
     }
 })
+
+async function verifyJWT(token: string, keySecret: string){
+    return JWT.verify(token, keySecret)
+} 
+
+export {
+    createTokenPair,
+    IdecodeUser,
+    authentication,
+    verifyJWT
+}

@@ -2,27 +2,28 @@
 import _, { Object } from'lodash'
 import { Schema } from 'mongoose';
 
-export const convertToObjectIdMongodb = (id: string) => new Schema.Types.ObjectId(id)
+const convertToObjectIdMongodb = (id: string) => new Schema.Types.ObjectId(id)
 
-export const getInfoData = (field: string[],object: object)=>{
+const getInfoData = (field: string[],object: object)=>{
     return _.pick(object,field)
 }
 
 //['a','b'] => {a:1,b:1}
-export const getSelectData = (select = [])=>{
+const getSelectData = (select = [])=>{
     return Object.fromEntries(select.map(element => [element,1]))
 }
 
 //['a','b'] => {a:0,b:0}
-export const unGetSelectData = (select = [])=>{
+const unGetSelectData = (select = [])=>{
     return Object.fromEntries(select.map(element => [element,0]))
 }
 /**
  * Record<Keys, Type> 
  * construct an object type whose key are Keys and whose property value are Type
  * by default, key always string(Typescript) or symbol(Javascript)
+ * here, we allows all type, but we remove all field has value null
  */
-export const removeUndefinedObject = (object:Record<string,any>): Record<string,any> =>{
+const removeUndefinedObject = (object:Record<string,any>): Record<string,any> =>{
     Object.keys(object).forEach(key =>{
         if(object[key] == null){
             delete object[key]
@@ -46,7 +47,7 @@ export const removeUndefinedObject = (object:Record<string,any>): Record<string,
  *  };
  * like this
  */
-// export const updateNestedObjectParser = (object: Record<string, any>) =>{
+// const updateNestedObjectParser = (object: Record<string, any>) =>{
 //     const final = {}
 //     Object.keys(object).forEach(key =>{
 //         if(typeof object[key] === 'object' && !Array.isArray(object[key])){
@@ -64,11 +65,10 @@ export const removeUndefinedObject = (object:Record<string,any>): Record<string,
 
 
 
-// export = {
-//     getInfoData ,
-//     getSelectData,
-//     unGetSelectData,
-//     removeUndefinedObject,
-//     updateNestedObjectParser,
-//     convertToObjectIdMongodb,
-// }
+export {
+    getInfoData ,
+    getSelectData,
+    unGetSelectData,
+    removeUndefinedObject,
+    convertToObjectIdMongodb,
+}

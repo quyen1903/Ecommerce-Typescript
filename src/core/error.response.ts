@@ -38,7 +38,7 @@ class NotFoundError extends ErrorResponse{
 }
 
 class ForbiddenError extends ErrorResponse{
-    constructor(message= ReasonPhrases.FORBIDDEN, statusCode=StatusCodes.FORBIDDEN){
+    constructor(message: string, statusCode=StatusCodes.FORBIDDEN){
         super(message,statusCode)
     }
 }
