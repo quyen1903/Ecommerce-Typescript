@@ -1,122 +1,127 @@
-// import { model, Schema, Types, Document} from 'mongoose'; 
-// import slugify from 'slugify';
+import { model, Schema, Types, Document} from 'mongoose'; 
+import slugify from 'slugify';
 
-// export enum ProductType {
-//     Electronics = 'Electronics',
-//     Clothing = 'Clothing',
-//     Furniture = 'Furniture'
-// }
+export interface IProduct extends Document{
+    _id: Types.ObjectId
+    product_name: string;
+    product_thumb: string;
+    product_description: string;
+    product_slug: string;
+    product_price: number;
+    product_quantity: number;
+    product_type: 'Electronics' | 'Clothing' | 'Furniture';
+    product_shop: Types.ObjectId;
+    product_attributes:Types.Subdocument;
+}
 
-// interface IProduct extends Document{
-//     product_name: string;
-//     product_thumb: string;
-//     product_description: string;
-//     product_slug: string;
-//     product_price: number;
-//     product_quantity: number;
-//     product_type: ProductType;
-//     product_shop: Types.ObjectId;
-//     product_attributes:{ type:Schema.Types.Mixed, required:true };
-//     product_ratingsAverage: number;
-//     product_variation: Types.Array;
-//     isDraft: boolean;
-//     isPubished: boolean;
-// }
+export interface IClothing extends Document{
+    _id: Types.ObjectId;
+    brand: string;
+    size: string;
+    material: string,
+    product_shop: Types.ObjectId;
+};
 
-// const DOCUMENT_NAME='Product'
-// const COLLECTION_NAME='Products'
+export interface IElectronics extends Document{
+    _id: Types.ObjectId;
+    manufacturer: string;
+    models: string;
+    color: string;
+    product_shop: Types.ObjectId;
+};
 
-// const productSchema:Schema = new Schema<IProduct>({
-//     product_name:{ type:String, required:true},
-//     product_thumb:{ type:String, required:true,},
-//     product_description:String,
-//     product_slug:String,
-//     product_price:{ type:Number, required:true },
-//     product_quantity:{ type:Number, required:true },
-//     product_type:{ type:String, required:true, enum:Object.values(ProductType) },
-//     product_shop:{ type:Schema.Types.ObjectId, ref:'Shop' },
-//     product_attributes:{ type:Schema.Types.Mixed, required:true },
-//     //more
-//     product_ratingsAverage:{
-//         type:Number,
-//         default:4.5,
-//         min:[1, 'rating must be above 1.0'],
-//         max:[5, 'rating must be below 5.0'],
-//         set:(value: number)=> Math.round(value * 10)/10
-//     },
-//     product_variation:{ type:Array, default:[] },
-//     isDraft:{ type:Boolean, default:true, index:true, select:false },
-//     isPubished:{ type:Boolean, default:false, index:true, select:false }
-// },{
-//     collection:COLLECTION_NAME,
-//     timestamps:true
-// });
+export interface IFurniture extends Document{
+    _id: Types.ObjectId;
+    brand: string;
+    size: string;
+    material: string;
+    product_shop: Types.ObjectId;
+};
 
-// /*create index for search*/
-// productSchema.index({
-//     product_name:'text',
-//     product_description: 'text'
-// })
+const DOCUMENT_NAME='Product'
+const COLLECTION_NAME='Products'
 
-// /*write a hook*/
+const productSchema: Schema = new Schema<IProduct>({
+    product_name:{ type:String, required:true},
+    product_thumb:{ type:String, required:true,},
+    product_description:String,
+    product_slug:String,
+    product_price:{ type:Number, required:true },
+    product_quantity:{ type:Number, required:true },
+    product_type:{ type:String, required:true, enum: ['Electronics', 'Clothing','Furniture']},
+    product_shop:{ type:Schema.Types.ObjectId, ref:'Shop' },
+    product_attributes:{ type: Schema.Types.Subdocument, required:true },
+},{
+    collection:COLLECTION_NAME,
+    timestamps:true
+});
 
-// // productSchema.pre('save',function (next){
-// //     this.product_slug = slugify(this.product_name,{lower: true}),
-// //     next()
-// // })
+/*create index for search*/
+productSchema.index({
+    product_name:'text',
+    product_description: 'text'
+})
 
-// /*define product type*/
-// const clothingSchema = new Schema({
-//     brand:{
-//         type:String,
-//         required:true,
-//     },
-//     size:String,
-//     material:String,
-//     product_shop:{
-//         type:Schema.Types.ObjectId,
-//         ref:'Shop'
-//     }
-// },{
-//     collection:'clothes',
-//     timestamps:true
-// });
+const clothingSchema: Schema = new Schema<IClothing>(
+    {
+        brand: {
+            type: String,
+            required: true,
+        },
+        size: String,
+        material: String,
+        product_shop: {
+            type: Schema.Types.ObjectId,
+            ref: 'Shop',
+        },
+    },
+    {
+        collection: 'clothes',
+        timestamps: true,
+    }
+);
 
-// const electronicSchema = new Schema({
-//     manufacturer:{
-//         type:String,
-//         required:true,
-//     },
-//     model:String,
-//     color:String,
-//     product_shop:{
-//         type:Schema.Types.ObjectId,
-//         ref:'Shop'
-//     }
-// },{
-//     collection:'electronics',
-//     timestamps:true
-// });
+const electronicSchema: Schema = new Schema<IElectronics>(
+    {
+        manufacturer: {
+            type: String,
+            required: true,
+        },
+        model: String,
+        color: String,
+        product_shop: {
+            type: Schema.Types.ObjectId,
+            ref: 'Shop',
+        },
+    },
+    {
+        collection: 'electronics',
+        timestamps: true,
+    }
+);
 
-// const furnitureSchema = new Schema({
-//     brand:{
-//         type:String,
-//         required:true,
-//     },
-//     size:String,
-//     material:String,
-//     product_shop:{
-//         type:Schema.Types.ObjectId,
-//         ref:'Shop'
-//     }
-// },{
-//     collection:'furnitures',
-//     timestamps:true
-// });
+const furnitureSchema: Schema = new Schema<IFurniture>(
+    {
+        brand: {
+            type: String,
+            required: true,
+        },
+        size: String,
+        material: String,
+        product_shop: {
+            type: Schema.Types.ObjectId,
+            ref: 'Shop',
+        },
+    },
+    {
+        collection: 'furnitures',
+        timestamps: true,
+    }
+);
 
-// module.exports = {
-//     product:model(DOCUMENT_NAME, productSchema),
-//     electronic:model('Electronics', electronicSchema),
-//     clothing:model('Clothing', clothingSchema),
-//     furniture:model('Furniture',furnitureSchema)
-// }
+
+export const product = model<IProduct>(DOCUMENT_NAME, productSchema)
+export const electronic =  model<IElectronics>('Electronics', electronicSchema)
+export const clothing =  model<IElectronics>('Clothing', clothingSchema)
+export const furniture = model<IFurniture>('Furniture', furnitureSchema)
+
