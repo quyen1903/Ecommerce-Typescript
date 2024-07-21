@@ -1,18 +1,6 @@
-import { model, Schema, Types, Document} from 'mongoose'; 
-import slugify from 'slugify';
+import { model, Schema, Types, Document, Model, Models} from 'mongoose'; 
 
-export interface IProduct extends Document{
-    _id: Types.ObjectId
-    product_name: string;
-    product_thumb: string;
-    product_description: string;
-    product_slug: string;
-    product_price: number;
-    product_quantity: number;
-    product_type: 'Electronics' | 'Clothing' | 'Furniture';
-    product_shop: Types.ObjectId;
-    product_attributes:Types.Subdocument;
-}
+//product and clothing, electronic and furniture are seperate document.
 
 export interface IClothing extends Document{
     _id: Types.ObjectId;
@@ -38,6 +26,19 @@ export interface IFurniture extends Document{
     product_shop: Types.ObjectId;
 };
 
+export interface IProduct extends Document{
+    _id: Types.ObjectId
+    product_name: string;
+    product_thumb: string;
+    product_description: string;
+    product_slug: string;
+    product_price: number;
+    product_quantity: number;
+    product_type: 'Clothing' | 'Electronics' | 'Furniture';
+    product_shop: Types.ObjectId;
+    product_attributes: IClothing | IElectronics | IFurniture; 
+}
+
 const DOCUMENT_NAME='Product'
 const COLLECTION_NAME='Products'
 
@@ -50,19 +51,19 @@ const productSchema: Schema = new Schema<IProduct>({
     product_quantity:{ type:Number, required:true },
     product_type:{ type:String, required:true, enum: ['Electronics', 'Clothing','Furniture']},
     product_shop:{ type:Schema.Types.ObjectId, ref:'Shop' },
-    product_attributes:{ type: Schema.Types.Subdocument, required:true },
+    product_attributes:{ type: Schema.Types.Mixed, required:true },
 },{
     collection:COLLECTION_NAME,
     timestamps:true
 });
 
 /*create index for search*/
-productSchema.index({
-    product_name:'text',
-    product_description: 'text'
-})
+// productSchema.index({
+//     product_name:'text',
+//     product_description: 'text'
+// })
 
-const clothingSchema: Schema = new Schema<IClothing>(
+const clothingSchema: Schema  = new Schema<IClothing>(
     {
         brand: {
             type: String,
@@ -121,7 +122,6 @@ const furnitureSchema: Schema = new Schema<IFurniture>(
 
 
 export const product = model<IProduct>(DOCUMENT_NAME, productSchema)
+export const clothing =  model<IClothing>('Clothing', clothingSchema)
 export const electronic =  model<IElectronics>('Electronics', electronicSchema)
-export const clothing =  model<IElectronics>('Clothing', clothingSchema)
 export const furniture = model<IFurniture>('Furniture', furnitureSchema)
-

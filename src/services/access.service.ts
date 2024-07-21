@@ -28,7 +28,7 @@ class AccessService{
         return await Shop.findOne({email}).select( {email:1, password:1, salt:1}).lean()
     };
 
-    static handleRefreshToken = async( keyStore: IKeyToken, user: IdecodeUser, refreshToken: string )=>{
+    public static handleRefreshToken = async( keyStore: IKeyToken, user: IdecodeUser, refreshToken: string )=>{
         /**
          * 1 check wheather user's token been used or not, if been used, remove key and for them to relogin
          * 2 if user's token is not valid token, force them to relogin, too
@@ -69,12 +69,12 @@ class AccessService{
         }
     };
 
-    static logout = async( keyStore: IKeyToken )=>{
+    public static logout = async( keyStore: IKeyToken )=>{
         const delKey = await KeyTokenService.removeKeyById(keyStore._id as Types.ObjectId);
         return delKey 
     };
 
-    static login = async({ email, password }:IShop)=>{
+    public static login = async({ email, password }:IShop)=>{
         /*
             1 - check email in database
             2 - match password
@@ -122,7 +122,7 @@ class AccessService{
         }
     }
 
-    static async register({name, email, password}: IShop){
+    public static async register({name, email, password}: IShop){
         /**
          * 1 - check wheather shop existed or not
          * 2 - create salt and hashed password
