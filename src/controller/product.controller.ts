@@ -40,6 +40,13 @@ class ProductController{
             metadata: await Factory.unPublishProductByShop( req.params.id, req.user.userId )
         }).send(res)
     }
+
+    getListSearchProduct = async(req: Request, res: Response, next: NextFunction)=>{
+        new SuccessResponse({
+            message: 'Search Product success',
+            metadata: await Factory.getListSearchProduct(req.params.keySearch)
+        }).send(res)
+    }
 }
 
 export default new ProductController()

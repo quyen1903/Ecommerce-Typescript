@@ -72,67 +72,43 @@ const productSchema: Schema = new Schema<IProduct>({
 });
 
 /*create index for search*/
-// productSchema.index({
-//     product_name:'text',
-//     product_description: 'text'
-// })
+productSchema.index({
+    product_name:'text',
+    product_description: 'text'
+})
 
-const clothingSchema: Schema  = new Schema<IClothing>(
-    {
-        brand: {
-            type: String,
-            required: true,
-        },
-        size: String,
-        material: String,
-        product_shop: {
-            type: Schema.Types.ObjectId,
-            ref: 'Shop',
-        },
-    },
-    {
-        collection: 'clothes',
-        timestamps: true,
-    }
-);
+const clothingSchema: Schema  = new Schema<IClothing>({
+    brand: { type: String, required: true },
+    size: String,
+    material: String,
+    product_shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
+},
+{
+    collection: 'clothes',
+    timestamps: true,
+});
 
-const electronicSchema: Schema = new Schema<IElectronics>(
-    {
-        manufacturer: {
-            type: String,
-            required: true,
-        },
-        model: String,
-        color: String,
-        product_shop: {
-            type: Schema.Types.ObjectId,
-            ref: 'Shop',
-        },
-    },
-    {
-        collection: 'electronics',
-        timestamps: true,
-    }
-);
+const electronicSchema: Schema = new Schema<IElectronics>({
+    manufacturer: { type: String,required: true,},
+    model: String,
+    color: String,
+    product_shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
+},
+{
+    collection: 'electronics',
+    timestamps: true,
+});
 
-const furnitureSchema: Schema = new Schema<IFurniture>(
-    {
-        brand: {
-            type: String,
-            required: true,
-        },
-        size: String,
-        material: String,
-        product_shop: {
-            type: Schema.Types.ObjectId,
-            ref: 'Shop',
-        },
-    },
-    {
-        collection: 'furnitures',
-        timestamps: true,
-    }
-);
+const furnitureSchema: Schema = new Schema<IFurniture>({
+    brand: { type: String, required: true },
+    size: String,
+    material: String,
+    product_shop: { type: Schema.Types.ObjectId, ref: 'Shop' }
+},
+{
+    collection: 'furnitures',
+    timestamps: true,
+});
 
 
 export const product = model<IProduct>(DOCUMENT_NAME, productSchema)

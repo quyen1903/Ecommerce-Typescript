@@ -46,7 +46,27 @@ export const unPublishProductByShop = async (product_shop: Types.ObjectId, produ
     return modifiedCount
 }
 
-
+export const searchProductByUser = async (keySearch: string)=>{
+    const regexSearch = new RegExp(keySearch).toString()
+    const results = await product.find(
+        {
+            isPublished: true,
+            $text:{
+                $search:regexSearch
+            }
+        },
+        {
+            score:{
+                $meta:'textScore'
+            }
+    }).sort(
+        {
+            score:
+            {$meta:'textScore'}
+        }
+    ).lean();
+    return results
+}
 
 const queryProduct = async (query: any, limit: number, skip: number)=>{
     return await product.find(query)

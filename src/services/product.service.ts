@@ -4,7 +4,8 @@ import {
     findAllDraftsForShop,
     findAllPublishForShop,
     publishProductByShop,
-    unPublishProductByShop
+    unPublishProductByShop,
+    searchProductByUser
 } from "../models/repository/product.repository";
 
 class Factory{
@@ -36,6 +37,10 @@ class Factory{
 
     static async unPublishProductByShop(product_id: string, product_shop: IProduct['product_shop']){
         return await unPublishProductByShop(product_shop, product_id)
+    }
+
+    static async getListSearchProduct(keySearch: any){
+        return searchProductByUser(keySearch)
     }
 }
 
