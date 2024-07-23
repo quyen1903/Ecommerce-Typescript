@@ -13,7 +13,7 @@ const HEADER ={
     REFRESHTOKEN:'x-rtoken-id',
 }
 
-const createTokenPair = async(payload: {
+export const createTokenPair = async(payload: {
         userId: Types.ObjectId,
         email: string
     }, publicKey: string, privateKey: string)=>{
@@ -42,14 +42,14 @@ const createTokenPair = async(payload: {
     }
 }
 
-interface IdecodeUser{
+export interface IdecodeUser{
     userId:Types.ObjectId,
     email: string,
     iat: number,
     exp: number
 }
 
-const authentication = asyncHandler(async(req:Request, res: Response, next: NextFunction)=>{
+export const authentication = asyncHandler(async(req:Request, res: Response, next: NextFunction)=>{
     /* 
     1 - check userId misssing
     2 - check keytoken referencing to currently userId
@@ -102,13 +102,6 @@ const authentication = asyncHandler(async(req:Request, res: Response, next: Next
     }
 })
 
-async function verifyJWT(token: string, keySecret: string){
+export async function verifyJWT(token: string, keySecret: string){
     return JWT.verify(token, keySecret)
 } 
-
-export {
-    createTokenPair,
-    IdecodeUser,
-    authentication,
-    verifyJWT
-}

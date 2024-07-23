@@ -20,11 +20,7 @@ class KeyTokenService{
     }
     
     static findByUserId = async (userId: string | Types.ObjectId): Promise<IKeyToken | null> => {
-        try {
-            return await Key.findOne({ userId: userId }).exec();
-        } catch (error) {
-            return null;
-        }
+        return await Key.findOne({ userId: userId }).exec();
     }
 
 
@@ -32,11 +28,11 @@ class KeyTokenService{
         return await Key.deleteMany({_id:id})
     }
     
-    static findByRefreshTokenUsed = async(refreshToken:IKeyToken)=>{
+    static findByRefreshTokenUsed = async(refreshToken: IKeyToken['refreshToken'])=>{
         return await Key.findOne({refreshTokensUsed:refreshToken})
     }
 
-    static findByRefreshToken = async(refreshToken:IKeyToken)=>{
+    static findByRefreshToken = async(refreshToken: IKeyToken['refreshToken'])=>{
         return await Key.findOne({refreshToken})
     }
 

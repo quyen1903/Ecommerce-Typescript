@@ -27,7 +27,7 @@ export interface IFurniture extends Document{
 };
 
 export interface IProduct extends Document{
-    _id: Types.ObjectId
+    product_id: Types.ObjectId
     product_name: string;
     product_thumb: string;
     product_description: string;
@@ -36,7 +36,11 @@ export interface IProduct extends Document{
     product_quantity: number;
     product_type: 'Clothing' | 'Electronics' | 'Furniture';
     product_shop: Types.ObjectId;
-    product_attributes: IClothing | IElectronics | IFurniture; 
+    product_attributes: IClothing | IElectronics | IFurniture;
+    product_ratingsAverage: number;
+    product_variation: Schema.Types.Array;
+    isDraft: boolean;
+    isPublished: boolean;
 }
 
 const DOCUMENT_NAME='Product'
@@ -52,6 +56,16 @@ const productSchema: Schema = new Schema<IProduct>({
     product_type:{ type:String, required:true, enum: ['Electronics', 'Clothing','Furniture']},
     product_shop:{ type:Schema.Types.ObjectId, ref:'Shop' },
     product_attributes:{ type: Schema.Types.Mixed, required:true },
+    product_ratingsAverage:{
+        type:Number,
+        default:4.5,
+        min:[1, 'rating must be above 1.0'],
+        max:[5, 'rating must be below 5.0'],
+        set:(value: number)=> Math.round(value * 10)/10
+    },
+    product_variation:{ type:Array, default:[]},
+    isDraft:{ type: Boolean, default:true, index:true, select:false },
+    isPublished:{ type:Boolean, default:false, index:true, select:false }
 },{
     collection:COLLECTION_NAME,
     timestamps:true

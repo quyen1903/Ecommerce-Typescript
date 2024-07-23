@@ -1,27 +1,41 @@
-import { Types } from "mongoose";
-import { IProduct, IClothing, IElectronics,IFurniture, product, clothing, furniture, electronic} from "../models/product.model"
+import { IProduct, product, clothing, furniture, electronic} from "../models/product.model"
 import { BadRequestError } from "../core/error.response";
+import { 
+    findAllDraftsForShop,
+    findAllPublishForShop,
+    publishProductByShop,
+    unPublishProductByShop
+} from "../models/repository/product.repository";
 
 class Factory{
-    
-    /*
-        index signature in typescript
-        it indicate productRegistry is object 
-        key is string, value is typeof product (typecasting)
-    */
-    static productRegistry: { [key: string] : any} = {};
+    private static productRegistry: {[keys: string]: any} = {}
 
-    /*
-
-    */
-    static registerProductType(product_type: string, classReference: typeof Product){
-        Factory.productRegistry[product_type] = classReference
+    static registerProductType(type: string, classRefrerence: typeof Product){
+        Factory.productRegistry[type] = classRefrerence
     }
 
-    static async createProduct( product_type: string, payload: IProduct ){
-        const productClass = Factory.productRegistry[product_type]
-        if(!productClass) throw new BadRequestError(`Invalid Product Types ${product_type}`)
+    static async createProduct( type: string, payload: IProduct){
+        const productClass = Factory.productRegistry[type]
+        if(!productClass) throw new BadRequestError(`Invalid Product Types ${type}`)
         return new productClass(payload).createProduct()
+    }
+    
+    static async findAllDraftsForShop(product_shop: IProduct['product_shop'], limit = 50, skip = 0){
+        const query = {product_shop, isDraft:true}
+        return await findAllDraftsForShop({query, limit, skip})
+    }
+
+    static async findAllPublishForShop(product_shop: IProduct['product_shop'], limit = 50, skip = 0){
+        const query = {product_shop, isPubished:true}
+        return await findAllPublishForShop({query, limit, skip})
+    }
+
+    static async publishProductByShop( product_id: string, product_shop: IProduct['product_shop']){
+        return await publishProductByShop(product_shop, product_id)
+    }
+
+    static async unPublishProductByShop(product_id: string, product_shop: IProduct['product_shop']){
+        return await unPublishProductByShop(product_shop, product_id)
     }
 }
 
@@ -54,7 +68,7 @@ class Product{
         this.product_type = product_type
     }
 
-    public async createProduct(subClassId: Types.ObjectId): Promise<IProduct>{
+    public async createProduct(subClassId: IProduct['product_shop']): Promise<IProduct>{
         const newProduct = await product.create({ ...this, _id: subClassId })
         return newProduct;
     };
@@ -101,15 +115,14 @@ class Furniture extends Product{
     }
 }
 
-const classReference = [
-    { type: 'Clothing',class: Clothing },
-    { type:'Electronics',class: Electronics },
-    { type:'Furniture',class: Furniture }
+const registProduct = [
+    {type: 'Clothing', class: Clothing},
+    {type: 'Electronics', class: Electronics},
+    {type: 'Furniture', class: Furniture}
 ]
 
-classReference.forEach((reference)=>{
-    Factory.registerProductType(reference.type, reference.class)
+registProduct.forEach((element)=>{
+    Factory.registerProductType(element.type, element.class)
 })
 
-console.log(Factory.productRegistry); 
 export default Factory
