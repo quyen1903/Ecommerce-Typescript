@@ -9,12 +9,12 @@ const getInfoData = (field: string[],object: object)=>{
 }
 
 //['a','b'] => {a:1,b:1}
-const getSelectData = (select = [])=>{
+const getSelectData = (select: string[])=>{
     return Object.fromEntries(select.map(element => [element,1]))
 }
 
 //['a','b'] => {a:0,b:0}
-const unGetSelectData = (select = [])=>{
+const unGetSelectData = (select: string[])=>{
     return Object.fromEntries(select.map(element => [element,0]))
 }
 /**

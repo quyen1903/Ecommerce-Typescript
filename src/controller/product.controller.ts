@@ -30,14 +30,14 @@ class ProductController{
     pubishProductByShop = async(req: Request, res: Response, next: NextFunction)=>{
         new SuccessResponse({
             message: 'Pubish new product success!',
-            metadata: await Factory.publishProductByShop( req.params.id, req.user.userId )
+            metadata: await Factory.publishProductByShop(req.params.id, req.user.userId)
         }).send(res)
     }
 
     unpublishProductByShop = async(req: Request, res: Response, next: NextFunction)=>{
         new SuccessResponse({
             message: 'Undo publish product success!',
-            metadata: await Factory.unPublishProductByShop( req.params.id, req.user.userId )
+            metadata: await Factory.unPublishProductByShop(req.params.id, req.user.userId)
         }).send(res)
     }
 
@@ -45,6 +45,20 @@ class ProductController{
         new SuccessResponse({
             message: 'Search Product success',
             metadata: await Factory.getListSearchProduct(req.params.keySearch)
+        }).send(res)
+    }
+    
+    findAllProducts = async(req: Request, res: Response, next: NextFunction)=>{
+        new SuccessResponse({
+            message: 'Search All Products success',
+            metadata: await Factory.findAllProducts(req.query)
+        }).send(res)
+    }
+    
+    findProduct = async(req: Request, res: Response, next: NextFunction)=>{
+        new SuccessResponse({
+            message: 'Search All Products success',
+            metadata: await Factory.findProduct(req.params.product_id)
         }).send(res)
     }
 }

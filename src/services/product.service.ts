@@ -5,7 +5,9 @@ import {
     findAllPublishForShop,
     publishProductByShop,
     unPublishProductByShop,
-    searchProductByUser
+    searchProductByUser,
+    findAllProducts,
+    findProduct
 } from "../models/repository/product.repository";
 
 class Factory{
@@ -39,9 +41,18 @@ class Factory{
         return await unPublishProductByShop(product_shop, product_id)
     }
 
-    static async getListSearchProduct(keySearch: any){
+    static async getListSearchProduct(keySearch: string){
         return searchProductByUser(keySearch)
     }
+
+    static async findAllProducts( {limit = 50, sort='ctime', page = 1, filter = {isPublished: true}} ){
+        return await findAllProducts(limit, sort, page, filter, ['product_name', 'product_thumb', 'product_price'] )
+    }
+
+    static async findProduct( product_id: string, unSelect = ['__v'] ) {
+        return await findProduct(product_id, unSelect);
+    }
+    
 }
 
 class Product{
