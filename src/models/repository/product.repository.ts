@@ -1,4 +1,4 @@
-import { SortOrder, Types } from "mongoose";
+import {  SortOrder, Types, Document, Model } from "mongoose";
 import { product } from "../product.model"
 import { getSelectData, unGetSelectData } from "../../utils/utils";
 
@@ -57,7 +57,7 @@ export const searchProductByUser = async (keySearch: string)=>{
                 $search:keySearch
             }
         },
-        {
+        {//meta will return metadata about returned document, this case is return text score
             score: { $meta: "textScore" } 
     }).sort(
         {
@@ -85,6 +85,17 @@ export const findAllProducts = async( limit: number, sort: string, page: number,
 
 export const findProduct = async(product_id: string, unSelect: string[])=>{
     return await product.findById(product_id).select(unGetSelectData(unSelect))
+}
+
+export const updateProductById=async<T extends Document>( 
+    productId: string,
+    payload: object,
+    model: Model<T>,
+    isNew = true 
+): Promise<T | null> =>{
+    return await model.findByIdAndUpdate(productId, payload, {
+        new: isNew
+    })
 }
 
 const queryProduct = async (query: any, limit: number, skip: number)=>{

@@ -8,9 +8,9 @@ router.get('/search/:keySearch',asyncHandler(productController.getListSearchProd
 router.get('',asyncHandler(productController.findAllProducts))
 router.get('/:product_id',asyncHandler(productController.findProduct))
 
-
 router.use(authentication);
 
+router.patch('/:productId',asyncHandler(productController.updateProduct));
 router.post('/publish/:id',asyncHandler(productController.pubishProductByShop));
 router.post('/unpublish/:id',asyncHandler(productController.unpublishProductByShop));
 router.post('',asyncHandler(productController.createProduct));

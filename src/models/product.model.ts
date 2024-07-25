@@ -1,5 +1,4 @@
-import { model, Schema, Types, Document, Model, Models} from 'mongoose'; 
-
+import { model, Schema, Types, Document } from 'mongoose'; 
 //product and clothing, electronic and furniture are seperate document.
 
 export interface IClothing extends Document{
@@ -112,6 +111,6 @@ const furnitureSchema: Schema = new Schema<IFurniture>({
 
 
 export const product = model<IProduct>(DOCUMENT_NAME, productSchema)
-export const clothing =  model<IClothing>('Clothing', clothingSchema)
-export const electronic =  model<IElectronics>('Electronics', electronicSchema)
+export const clothing = model<IClothing>('Clothing', clothingSchema)
+export const electronic = model<IElectronics>('Electronics', electronicSchema)
 export const furniture = model<IFurniture>('Furniture', furnitureSchema)
