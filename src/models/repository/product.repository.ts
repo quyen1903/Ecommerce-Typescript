@@ -1,9 +1,13 @@
-import {  SortOrder, Types, Document, Model } from "mongoose";
-import { product } from "../product.model"
+import { SortOrder, Types, Document, Model } from "mongoose";
+import { IProduct, product } from "../product.model"
 import { getSelectData, unGetSelectData } from "../../utils/utils";
 
 interface queries{
-    query: any;
+    query: {
+        product_shop:IProduct['product_shop'];
+        isDraft?:IProduct['isDraft'];
+        isPublished?:IProduct['isPublished']
+    };
     limit: number;
     skip: number;
 }
@@ -16,7 +20,7 @@ export const findAllPublishForShop = async ({query, limit, skip}: queries)=>{
     return await queryProduct(query, limit, skip)
 }
 
-const findShop = async(product_shop: Types.ObjectId, product_id: string)=>{
+const findShop = async(product_shop: IProduct['product_shop'], product_id: IProduct['_id'])=>{
     const foundShop = await product.findOne({
         product_shop: product_shop,
         _id: product_id
@@ -24,7 +28,7 @@ const findShop = async(product_shop: Types.ObjectId, product_id: string)=>{
     return foundShop
 }  
 
-export const publishProductByShop = async (product_shop: Types.ObjectId, product_id: string)=>{
+export const publishProductByShop = async (product_shop: Types.ObjectId, product_id: IProduct['_id'])=>{
     const foundShop =await findShop(product_shop, product_id)
 
     if(!foundShop) return null
@@ -36,7 +40,7 @@ export const publishProductByShop = async (product_shop: Types.ObjectId, product
     return modifiedCount
 }
 
-export const unPublishProductByShop = async (product_shop: Types.ObjectId, product_id: string)=>{
+export const unPublishProductByShop = async (product_shop: IProduct['product_shop'], product_id: IProduct['_id'])=>{
     const foundShop =await findShop(product_shop, product_id)
     if(!foundShop) return null
 
@@ -83,7 +87,7 @@ export const findAllProducts = async( limit: number, sort: string, page: number,
     return products
 }
 
-export const findProduct = async(product_id: string, unSelect: string[])=>{
+export const findProduct = async(product_id: Types.ObjectId, unSelect: string[])=>{
     return await product.findById(product_id).select(unGetSelectData(unSelect))
 }
 
@@ -97,6 +101,9 @@ export const updateProductById=async<T extends Document>(
         new: isNew
     })
 }
+export const getProductById = async (productId: Types.ObjectId)=>{
+    return await product.findOne({_id: productId}).lean()
+}
 
 const queryProduct = async (query: any, limit: number, skip: number)=>{
     return await product.find(query)
@@ -107,3 +114,4 @@ const queryProduct = async (query: any, limit: number, skip: number)=>{
     .lean()
     .exec()
 }
+

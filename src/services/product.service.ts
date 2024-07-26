@@ -11,12 +11,13 @@ import {
     findProduct,
     updateProductById,
 } from "../models/repository/product.repository";
-import { updateNestedObjectParser } from "../utils/utils"
+import { flattenNestedObject } from "../utils/utils"
+import { insertInventory } from "../models/repository/inventory.repository";
 
 class Factory{
     private static productRegistry: {[keys: string]: any} = {}
 
-    static registerProductType(type: string, classRefrerence: any){
+    static registerProductType(type: string, classRefrerence: typeof Product){
         Factory.productRegistry[type] = classRefrerence
     }
 
@@ -40,15 +41,15 @@ class Factory{
     }
 
     static async findAllPublishForShop(product_shop: IProduct['product_shop'], limit = 50, skip = 0){
-        const query = {product_shop, isPubished:true}
+        const query = {product_shop, isPublished:true}
         return await findAllPublishForShop({query, limit, skip})
     }
 
-    static async publishProductByShop( product_id: string, product_shop: IProduct['product_shop']){
+    static async publishProductByShop( product_id: IProduct['_id'], product_shop: IProduct['product_shop']){
         return await publishProductByShop(product_shop, product_id)
     }
 
-    static async unPublishProductByShop(product_id: string, product_shop: IProduct['product_shop']){
+    static async unPublishProductByShop(product_id: IProduct['_id'], product_shop: IProduct['product_shop']){
         return await unPublishProductByShop(product_shop, product_id)
     }
 
@@ -60,7 +61,7 @@ class Factory{
         return await findAllProducts(limit, sort, page, filter, ['product_name', 'product_thumb', 'product_price'] )
     }
 
-    static async findProduct( product_id: string, unSelect = ['__v','product_variation'] ) {
+    static async findProduct( product_id: IProduct['_id'], unSelect = ['__v','product_variation'] ) {
         return await findProduct(product_id, unSelect);
     }
     
@@ -96,7 +97,8 @@ class Product{
     }
 
     async createProduct(subClassId: IProduct['product_shop']): Promise<IProduct>{
-        const newProduct = await product.create({ ...this, _id: subClassId })
+        const newProduct = await product.create({ ...this, _id: subClassId });
+        if(newProduct) await insertInventory( newProduct._id, this.product_shop, this.product_quantity )
         return newProduct;
     };
 
@@ -121,11 +123,11 @@ class Clothing extends Product{
         if(objectParams.product_attributes){
             await updateProductById(
                 productId,
-                updateNestedObjectParser(objectParams.product_attributes),
+                flattenNestedObject(objectParams.product_attributes),
                 clothing
             )
         }
-        const updateProduct = await super.updateProduct(productId, updateNestedObjectParser(objectParams))
+        const updateProduct = await super.updateProduct(productId, flattenNestedObject(objectParams))
         return updateProduct
     }
 }
@@ -146,11 +148,11 @@ class Electronics extends Product{
         if(objectParams.product_attributes){
             await updateProductById(
                 productId,
-                updateNestedObjectParser(objectParams.product_attributes),
+                flattenNestedObject(objectParams.product_attributes),
                 electronic
             )
         }
-        const updateProduct = await super.updateProduct(productId, updateNestedObjectParser(objectParams))
+        const updateProduct = await super.updateProduct(productId, flattenNestedObject(objectParams))
         return updateProduct
     }
 }
@@ -176,11 +178,11 @@ class Furniture extends Product{
         if(objectParams.product_attributes){
             await updateProductById(
                 productId,
-                updateNestedObjectParser(objectParams.product_attributes),
+                flattenNestedObject(objectParams.product_attributes),
                 furniture
             )
         }
-        const updateProduct = await super.updateProduct(productId, updateNestedObjectParser(objectParams))
+        const updateProduct = await super.updateProduct(productId, flattenNestedObject(objectParams))
         return updateProduct
     }
 }

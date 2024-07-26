@@ -1,8 +1,13 @@
 import { Request, Response, NextFunction } from 'express'; 
 import { SuccessResponse } from '../core/success.response';
 import Factory from '../services/product.service';
+import { Types } from 'mongoose';
 
 class ProductController{
+    private stringToObjectId(argument: string){
+        return new Types.ObjectId(argument)
+    }
+
     createProduct = async(req: Request, res: Response, next: NextFunction)=>{
         new SuccessResponse({
             message: 'Create new product success!',
@@ -38,16 +43,18 @@ class ProductController{
     }
 
     pubishProductByShop = async(req: Request, res: Response, next: NextFunction)=>{
+        const productId = this.stringToObjectId(req.params.id)
         new SuccessResponse({
             message: 'Pubish new product success!',
-            metadata: await Factory.publishProductByShop(req.params.id, req.user.userId)
+            metadata: await Factory.publishProductByShop(productId, req.user.userId)
         }).send(res)
     }
 
     unpublishProductByShop = async(req: Request, res: Response, next: NextFunction)=>{
+        const productId = this.stringToObjectId(req.params.id)
         new SuccessResponse({
             message: 'Undo publish product success!',
-            metadata: await Factory.unPublishProductByShop(req.params.id, req.user.userId)
+            metadata: await Factory.unPublishProductByShop(productId, req.user.userId)
         }).send(res)
     }
 
@@ -66,9 +73,10 @@ class ProductController{
     }
     
     findProduct = async(req: Request, res: Response, next: NextFunction)=>{
+        const productId = this.stringToObjectId(req.params.product_id)
         new SuccessResponse({
             message: 'Search All Products success',
-            metadata: await Factory.findProduct(req.params.product_id)
+            metadata: await Factory.findProduct(productId)
         }).send(res)
     }
 }

@@ -26,7 +26,7 @@ export interface IFurniture extends Document{
 };
 
 export interface IProduct extends Document{
-    product_id: Types.ObjectId
+    _id: Types.ObjectId
     product_name: string;
     product_thumb: string;
     product_description: string;

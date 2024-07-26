@@ -1,8 +1,5 @@
 'use strict'
 import _, { Object } from'lodash'
-import { Schema } from 'mongoose';
-
-export const convertToObjectIdMongodb = (id: string) => new Schema.Types.ObjectId(id)
 
 export const getInfoData = (field: string[],object: object)=>{
     return _.pick(object,field)
@@ -33,46 +30,48 @@ export const removeUndefinedObject = (object:Record<string,any>): Record<string,
 }
 
 /**
- * we use recursion 
- * first thing first, loop through object key 
- * && !Array because behind the scense, array is object, too
- * if key of object is object, we pass it to updateNestedObjectParser
- * which means it this is recursion
- * this allows us to wipe out null which is inside of nested object
- * a = {
- *    c:{
- *      d:1,
- *      e:2
- *    }
- *  };
- * 
- * db.collection.updateOne({
- *  `c.d`:1
- *  `c.e`:2
- * })
- * like this
- * example
- * this is final {
-  'product_attributes.brand': 'Calvin Klein',
-  'product_attributes.size': 'xl',
-  'product_attributes.material': 'Cotton',
-  product_name: 'quần lọt khe đen huyền ảo',
-  product_price: 499000,
-  product_shop: '66966a288e3d3d7e62886da3',
-  product_type: 'Clothing'
+  example
+  const nestedObject = {
+    level1: {level2: {level3: {level4: {level5: {key: 'value'}}}}},anotherLevel1: {level2: {key2: 'value2'}
     }
-  when we have dots .  inside key of object
-  mongoose understand that is nested fields.
-  this allows us update nested field 
+    result
+    {
+        'level1.level2.level3.key4.key5.key': 'value',
+        'anotherLevel1.key2': 'value2'
+    }
+    first we pass nestedObject, key is level1 and value is level2:{}, we wait result of next level as argument for this level   
+    second we pass level1, key is level2 and value is level3:{}, response at this level is result of call to level2
+    third we pass level2, key is level3 and value is level4:{}, response at this level is result of call to level3
+    fourth we pass level3, key is level4 and value is level5:{}, response at this level is result of call to level4
+    fifth we pass level 4, key is level5 and value is objecct {key: 'value'}, response at this level is result call to level5
+    sixth we pass object, this time value is 'value' string, not an object. else statement is execute. final is { key: 'value' }
+    { key: 'value' } is value of response call to level five, this code would be execute
+    Object.keys(response).forEach(a =>{
+        final[`${key}.${a}`] = response[a]
+    })
+    final{} will be update with value which come from level 5 call, then
+    Object.keys(response).forEach(a =>{
+        final[`${key}.${a}`] = response[a]
+    })
+    continue use value from level 4 call to update final{}
+    so on utils it reach the end of level1.
+    same thing in anotherLevel1 fields
+
+    AFTER THIS LINE OF CODE
+    return final
+    IMMIDIATELY IT PASS THIS RETURN TO HERE
+    const response = updateNestedObjectParser(object[key])
+    NOT END OUR CODE
+};
  */
-export const updateNestedObjectParser =(object: Record<string, any>): Record<string, any> =>{
+export const flattenNestedObject =(object: Record<string, any>): Record<string, any> =>{
     if (!object) {
         return {};
     }
     const final: Record<string, any> = {}
     Object.keys(object).forEach(key =>{
         if(typeof object[key] === 'object' && !Array.isArray(object[key])){
-            const response = updateNestedObjectParser(object[key])
+            const response = flattenNestedObject(object[key])
             Object.keys(response).forEach(a =>{
                 final[`${key}.${a}`] = response[a]
             })
@@ -80,6 +79,5 @@ export const updateNestedObjectParser =(object: Record<string, any>): Record<str
             final[key] = object[key]
         }
     })
-    console.log('this is final',final)
     return final
 }
