@@ -13,6 +13,14 @@ import {
 } from "../models/repository/product.repository";
 import { flattenNestedObject } from "../utils/utils"
 import { insertInventory } from "../models/repository/inventory.repository";
+import { IProductRequest } from "../controller/product.controller";
+
+interface IfindAll{
+    product_shop: IProduct['product_shop'],
+    limit?: number,
+    skip?: number
+}
+
 
 class Factory{
     private static productRegistry: {[keys: string]: any} = {}
@@ -21,13 +29,17 @@ class Factory{
         Factory.productRegistry[type] = classRefrerence
     }
 
-    static async createProduct( type: string, payload: IProduct){
+    static async createProduct( type: IProductRequest['product_type'], payload: IProductRequest){
         const productClass = Factory.productRegistry[type]
         if(!productClass) throw new BadRequestError(`Invalid Product Types ${type}`)
         return new productClass(payload).createProduct()
     }
 
-    static async updateProduct(type: string, productId: string, payload:IProduct){
+    static async updateProduct(
+        type: IProductRequest['product_type'],
+        productId: string,
+        payload:Object
+    ){
         const productClass = Factory.productRegistry[type]
         if(!productClass)throw new BadRequestError(`Invalid Product Types ${type}`)
         return new productClass(payload).updateProduct(productId)
@@ -35,22 +47,28 @@ class Factory{
     
 
     //query
-    static async findAllDraftsForShop(product_shop: IProduct['product_shop'], limit = 50, skip = 0){
+    static async findAllDraftsForShop({product_shop, limit = 50, skip = 0}: IfindAll){
         const query = {product_shop, isDraft:true}
         return await findAllDraftsForShop({query, limit, skip})
     }
 
-    static async findAllPublishForShop(product_shop: IProduct['product_shop'], limit = 50, skip = 0){
+    static async findAllPublishForShop({ product_shop, limit = 50, skip = 0}: IfindAll){
         const query = {product_shop, isPublished:true}
         return await findAllPublishForShop({query, limit, skip})
     }
 
-    static async publishProductByShop( product_id: IProduct['_id'], product_shop: IProduct['product_shop']){
-        return await publishProductByShop(product_shop, product_id)
+    static async publishProductByShop( 
+        {product_shop, product_id}: 
+        {product_shop: IProduct['product_shop'], product_id: string}
+    ){
+        return await publishProductByShop({product_shop, product_id})
     }
 
-    static async unPublishProductByShop(product_id: IProduct['_id'], product_shop: IProduct['product_shop']){
-        return await unPublishProductByShop(product_shop, product_id)
+    static async unPublishProductByShop(
+        {product_shop, product_id}: 
+        {product_shop: IProduct['product_shop'], product_id: string}
+    ){
+        return await unPublishProductByShop({product_shop, product_id})
     }
 
     static async getListSearchProduct(keySearch: string){
@@ -61,8 +79,8 @@ class Factory{
         return await findAllProducts(limit, sort, page, filter, ['product_name', 'product_thumb', 'product_price'] )
     }
 
-    static async findProduct( product_id: IProduct['_id'], unSelect = ['__v','product_variation'] ) {
-        return await findProduct(product_id, unSelect);
+    static async findProduct( {product_id}:{product_id: string}) {
+        return await findProduct(product_id, ['__v','product_variation']);
     }
     
 }

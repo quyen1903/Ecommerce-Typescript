@@ -7,6 +7,7 @@ import { getInfoData } from '../utils/utils';
 import { IKeyToken } from '../models/keytoken.model';
 import { Types } from 'mongoose';
 import { IdecodeUser } from '../auth/authUtils';
+import { IAccessRequest } from '../controller/access.controller';
 
 class AccessService{
     private static generateKeyPair(){
@@ -74,7 +75,7 @@ class AccessService{
         return delKey 
     };
 
-    static login = async({ email, password }:IShop)=>{
+    static login = async({ email, password }:IAccessRequest)=>{
         /*
             1 - check email in database
             2 - match password
@@ -122,7 +123,7 @@ class AccessService{
         }
     }
 
-    static async register({name, email, password}: IShop){
+    static async register({name, email, password}: IAccessRequest){
         /**
          * 1 - check wheather shop existed or not
          * 2 - create salt and hashed password
@@ -140,7 +141,7 @@ class AccessService{
         const passwordHashed = crypto.pbkdf2Sync(password,salt,100,64,'sha512').toString('hex')
 
         //3
-        const newShop = await Shop.create({name, salt, email, password:passwordHashed, roles:RoleShop.SHOP} as IShop)
+        const newShop = await Shop.create({name, salt, email, password:passwordHashed, roles:RoleShop.SHOP})
 
         if(newShop){
             //4

@@ -20,7 +20,7 @@ export const findAllPublishForShop = async ({query, limit, skip}: queries)=>{
     return await queryProduct(query, limit, skip)
 }
 
-const findShop = async(product_shop: IProduct['product_shop'], product_id: IProduct['_id'])=>{
+const findShop = async(product_shop: IProduct['product_shop'], product_id: string)=>{
     const foundShop = await product.findOne({
         product_shop: product_shop,
         _id: product_id
@@ -28,7 +28,10 @@ const findShop = async(product_shop: IProduct['product_shop'], product_id: IProd
     return foundShop
 }  
 
-export const publishProductByShop = async (product_shop: Types.ObjectId, product_id: IProduct['_id'])=>{
+export const publishProductByShop = async (
+    {product_shop, product_id}:
+    {product_shop: IProduct['product_shop'], product_id: string}
+)=>{
     const foundShop =await findShop(product_shop, product_id)
 
     if(!foundShop) return null
@@ -40,7 +43,10 @@ export const publishProductByShop = async (product_shop: Types.ObjectId, product
     return modifiedCount
 }
 
-export const unPublishProductByShop = async (product_shop: IProduct['product_shop'], product_id: IProduct['_id'])=>{
+export const unPublishProductByShop = async (
+    {product_shop, product_id}:
+    {product_shop: IProduct['product_shop'], product_id:string}
+)=>{
     const foundShop =await findShop(product_shop, product_id)
     if(!foundShop) return null
 
@@ -87,16 +93,16 @@ export const findAllProducts = async( limit: number, sort: string, page: number,
     return products
 }
 
-export const findProduct = async(product_id: Types.ObjectId, unSelect: string[])=>{
+export const findProduct = async(product_id: string, unSelect: string[])=>{
     return await product.findById(product_id).select(unGetSelectData(unSelect))
 }
 
-export const updateProductById=async<T extends Document>( 
+export const updateProductById=async<Type>( 
     productId: string,
     payload: object,
-    model: Model<T>,
+    model: Model<Type>,
     isNew = true 
-): Promise<T | null> =>{
+): Promise<Type | null> =>{
     return await model.findByIdAndUpdate(productId, payload, {
         new: isNew
     })

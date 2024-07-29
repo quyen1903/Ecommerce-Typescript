@@ -2,6 +2,12 @@ import { Request, Response, NextFunction } from 'express';
 import AccessService from "../services/access.service"
 import { SuccessResponse } from '../core/success.response'
 
+export interface IAccessRequest{
+    name: string;
+    email: string;
+    password: string
+}
+
 class AccessController{
     handlerRefreshToken = async(req: Request, res: Response, next: NextFunction)=>{
         new SuccessResponse({
