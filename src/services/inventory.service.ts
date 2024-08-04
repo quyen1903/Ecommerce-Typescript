@@ -7,7 +7,7 @@ class InventoryService{
         stock, 
         productId, 
         shopId,
-        location = '17A, Conghoa '
+        location = '17A, Conghoa'
     }:Iinventory){
         const product = await getProductById(productId)
         if(!product) throw new BadRequestError('the product is not existed!!!')

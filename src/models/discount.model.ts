@@ -14,13 +14,13 @@ export interface IdiscountModel extends Document{
     discount_end_dates: Date;
     discount_max_uses: number;
     discount_uses_count: number
-    discount_users_used: Schema.Types.Array
+    discount_users_used: Types.ObjectId[];
     discount_max_uses_per_user: number;
     discount_min_order_value: number,
     discount_shopId: Types.ObjectId
     discount_is_active: boolean;
     discount_applies_to: string;
-    discount_product_ids: Schema.Types.Array
+    discount_product_ids: string[]
 }
 
 const discountSchema: Schema =new Schema<IdiscountModel>({
@@ -33,13 +33,13 @@ const discountSchema: Schema =new Schema<IdiscountModel>({
     discount_end_dates:{type:Date,required:true},
     discount_max_uses:{type:Number,required:true,},
     discount_uses_count:{type:Number,required:true,},
-    discount_users_used:{type:Array,default:[],},
+    discount_users_used:{type: [Types.ObjectId], default: []},
     discount_max_uses_per_user:{type:Number,required:true,},
     discount_min_order_value:{type:Number,required:true,default:0,},
     discount_shopId:{type:Schema.Types.ObjectId,ref:'Shop'},
     discount_is_active:{type:Boolean,default:true},
     discount_applies_to:{type:String,required:true,enum:['all', 'specific']},
-    discount_product_ids:{type:Array,default:[]}
+    discount_product_ids: { type: [String], default: [] }
 },{
     timestamps:true,
     collection:COLLECTION_NAME,

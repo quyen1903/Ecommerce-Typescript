@@ -40,6 +40,6 @@ export const findAllDiscountCodesSelect = async(limit = 50, page = 1, sort = 'ct
 
 }
 
-// export const checkDiscountExists = async({model, filter})=>{
-//     return await model.findOne(filter).lean()
-// }
+export const checkDiscountExists = async(filter: object)=>{
+    return await discount.findOne(filter).lean()
+}

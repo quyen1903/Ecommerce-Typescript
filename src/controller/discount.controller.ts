@@ -2,7 +2,7 @@ import DiscountService from "../services/discount.service";
 import { SuccessResponse } from'../core/success.response';
 import { Request, Response, NextFunction } from 'express'; 
 
-export interface IDiscountCRUDRequest {
+export interface IDiscountRequest {
     name: string;
     description: string;
     type: string;
@@ -18,14 +18,16 @@ export interface IDiscountCRUDRequest {
     shopId: string;
     is_active: boolean;
     applies_to: string;
-    product_ids: string[]
-}
-
-export interface IDiscountQueryRequest{
-    code: string;
-    shopId: string;
+    product_ids: string[];
     limit: number;
-    page: number
+    page: number;
+    codeId: string,
+    userId: string,
+    products:[{
+        productId: string,
+        quantity: number,
+        price: number
+    }]
 }
 
 class DiscountController{
@@ -43,28 +45,28 @@ class DiscountController{
         new SuccessResponse({
             message:'Successfully get all code',
             metadata:await DiscountService.getAllDiscountCodesByShop({
-                ...req.query as unknown as IDiscountQueryRequest
+                ...req.query as unknown as IDiscountRequest
             })
         }).send(res)
     }
 
-    // getDiscountAmount = async(req: Request, res: Response, next: NextFunction)=>{
-    //     new SuccessResponse({
-    //         message:'Successfully get Amount',
-    //         metadata:await DiscountService.getDiscountAmount({
-    //             ...req.body,
-    //         })
-    //     }).send(res)
-    // }
+    getDiscountAmount = async(req: Request, res: Response, next: NextFunction)=>{
+        new SuccessResponse({
+            message:'Successfully get Amount',
+            metadata:await DiscountService.getDiscountAmount({
+                ...req.body,
+            })
+        }).send(res)
+    }
 
-    // getAllDiscountCodesWithProducts = async(req: Request, res: Response, next: NextFunction)=>{
-    //     new SuccessResponse({
-    //         message:'Successfully get all code with product',
-    //         metadata:await DiscountService.getAllDiscountCodesWithProduct({
-    //             ...req.query
-    //         })
-    //     }).send(res)
-    // }
+    getAllDiscountCodesWithProducts = async(req: Request, res: Response, next: NextFunction)=>{
+        new SuccessResponse({
+            message:'Successfully get all code with product',
+            metadata:await DiscountService.getAllDiscountCodesWithProduct({
+                ...req.query as unknown as IDiscountRequest
+            })
+        }).send(res)
+    }
 }
 
 export default new DiscountController()
