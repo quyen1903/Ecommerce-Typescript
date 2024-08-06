@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express'; 
 import { SuccessResponse } from '../core/success.response';
 import Factory from '../services/product.service';
-import { convertToObjectIdMongodb } from '../utils/utils';
 
 export interface IClothingRequest extends Document{
     brand: string;

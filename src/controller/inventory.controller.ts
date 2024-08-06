@@ -1,9 +1,13 @@
 import { Request, Response, NextFunction } from 'express'; 
 import { SuccessResponse } from '../core/success.response';
 import InventoryService from '../services/inventory.service';
-import { Types } from 'mongoose';
-import { Iinventory } from '../models/inventory.model';
 
+export interface IInventoryRequest{
+    productId: string;
+    location: string;
+    stock: number;
+    shopId: string;
+}
 
 class InventoryController{
 

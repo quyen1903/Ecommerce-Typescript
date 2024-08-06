@@ -1,14 +1,9 @@
 import { BadRequestError } from '../core/error.response';
-import  Inventory, {Iinventory}  from'../models/inventory.model';
+import  Inventory  from'../models/inventory.model';
 import { getProductById } from '../models/repository/product.repository';
-
+import { IInventoryRequest } from '../controller/inventory.controller';
 class InventoryService{
-    static async addStockToInventory({
-        stock, 
-        productId, 
-        shopId,
-        location = '17A, Conghoa'
-    }:Iinventory){
+    static async addStockToInventory({ stock, productId, shopId, location = '17A, Conghoa' }:IInventoryRequest){
         const product = await getProductById(productId)
         if(!product) throw new BadRequestError('the product is not existed!!!')
         

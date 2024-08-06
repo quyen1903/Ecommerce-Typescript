@@ -107,7 +107,7 @@ export const updateProductById=async<Type>(
         new: isNew
     })
 }
-export const getProductById = async (productId: Types.ObjectId)=>{
+export const getProductById = async (productId: string)=>{
     return await product.findOne({_id: productId}).lean()
 }
 

@@ -3,6 +3,9 @@ import { Types, model,Schema, Document} from "mongoose";
 
 const DOCUMENT_NAME='Inventory'
 const COLLECTION_NAME='Inventories'
+export interface IcartModel{
+    
+}
 // Declare the Schema of the Mongo model
 export interface Iinventory extends Document{
     _id: Types.ObjectId;
