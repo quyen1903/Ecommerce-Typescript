@@ -21,7 +21,6 @@ interface IfindAll{
     skip?: number
 }
 
-
 class Factory{
     private static productRegistry: {[keys: string]: any} = {}
 

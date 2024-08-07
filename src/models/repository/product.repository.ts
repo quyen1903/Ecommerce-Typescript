@@ -31,7 +31,7 @@ export const findAllPublishForShop = async ({query, limit, skip}: queries)=>{
     return await queryProduct(query, limit, skip)
 }
 
-const findShop = async(product_shop: IProduct['product_shop'], product_id: string)=>{
+const findShop = async(product_shop: IProduct['product_shop'], product_id?: string)=>{
     const foundShop = await product.findOne({
         product_shop: product_shop,
         _id: product_id
@@ -104,8 +104,8 @@ export const findAllProducts = async( limit: number, sort: string, page: number,
     return products
 }
 
-export const findProduct = async(product_id: string, unSelect: string[])=>{
-    return await product.findById(product_id).select(unGetSelectData(unSelect))
+export const findProduct = async(product_id: string, unSelect?: string[])=>{
+    return await product.findById(product_id).select(unGetSelectData(unSelect!))
 }
 
 export const updateProductById=async<Type>( 
