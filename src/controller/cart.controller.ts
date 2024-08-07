@@ -4,13 +4,7 @@ import CartService from '../services/cart.service';
 
 export interface ICartRequest{
     userId: string;
-    product:{
-        productId: string,
-        shopId: string,
-        quantity: number,
-        name: string,
-        price: number
-    };
+    product:ICartProduct;
     shop_order_ids:{
         shopId: string,
         item_products:{
@@ -24,11 +18,19 @@ export interface ICartRequest{
     productId: string
 };
 
+export interface ICartProduct{
+    productId: string,
+    shopId: string,
+    quantity: number,
+    name: string,
+    price: number
+}
+
 class CartController{
 
     addToCart = async function(req: Request, res: Response, next: NextFunction){
         new SuccessResponse({
-            message:'Create new Cart Success',
+            message:'Add new product to cart success',
             metadata: await CartService.addToCart(req.body)
         }).send(res)
     }

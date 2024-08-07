@@ -23,11 +23,11 @@ export interface IDiscountRequest {
     page: number;
     codeId: string,
     userId: string,
-    products:[{
+    products:{
         productId: string,
         quantity: number,
         price: number
-    }]
+    }[]
 }
 
 class DiscountController{

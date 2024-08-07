@@ -2,19 +2,19 @@ import { Request, Response, NextFunction } from 'express';
 import { SuccessResponse } from '../core/success.response';
 import Factory from '../services/product.service';
 
-export interface IClothingRequest extends Document{
+export interface IClothingRequest{
     brand: string;
     size: string;
     material: string;
 };
 
-export interface IElectronicsRequest extends Document{
+export interface IElectronicsRequest{
     manufacturer: string;
     models: string;
     color: string;
 };
 
-export interface IFurnitureRequest extends Document{
+export interface IFurnitureRequest{
     brand: string;
     size: string;
     material: string;

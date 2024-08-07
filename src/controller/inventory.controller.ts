@@ -10,16 +10,12 @@ export interface IInventoryRequest{
 }
 
 class InventoryController{
-
     addStockToInventory = async function(req: Request, res: Response, next: NextFunction){
         new SuccessResponse({
             message:'Add Stock To inventory Success',
             metadata: await InventoryService.addStockToInventory(req.body)
         }).send(res)
-
-        console.log(req)
     }
-
 }
 
 

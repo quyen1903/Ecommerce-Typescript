@@ -16,28 +16,14 @@ import { findAllProducts } from "../models/repository/product.repository";
 
 class DiscountService{
     static async createDiscountCode(payload:IDiscountRequest){
-        const {
-            name,
-            description,
-            type,
-            value,
-            code,
-            start_date,
-            end_date,
-            max_uses,
-            uses_count,
-            users_used,
-            max_uses_per_user,
-            min_order_value,
-            shopId,
-            is_active,
-            applies_to,
-            product_ids
+        const { name, description, type, value, code, start_date, end_date, max_uses, uses_count,
+            users_used,max_uses_per_user, min_order_value, shopId, is_active, applies_to, product_ids
         } = payload
 
+        //loop through 
         const objectId_users_used = users_used.map((x)=> convertToObjectIdMongodb(x))
 
-        //kiem tra
+
         if(new Date() < new Date(start_date) || new Date() > new Date(end_date)){
             throw new BadRequestError('Discount code has expired')
         }
@@ -46,7 +32,6 @@ class DiscountService{
             throw new BadRequestError('start date must before end day')
         }
 
-        //create index for discount
         const foundDiscount = await discount.findOne({
             discount_code:code,
             discount_shopId: convertToObjectIdMongodb(shopId)
@@ -81,7 +66,7 @@ class DiscountService{
         get all discount code available with products
     */
     static async getAllDiscountCodesWithProduct({code, shopId, limit, page}:IDiscountRequest){
-        //create index for discount_code
+        //check round
         const foundDiscount = await discount.findOne({
             discount_code:code,
             discount_shopId: convertToObjectIdMongodb(shopId)
@@ -92,9 +77,9 @@ class DiscountService{
         }
 
         const { discount_applies_to, discount_product_ids } = foundDiscount
-        console.log('this is discount_product_ids',discount_product_ids)
         let products;
 
+        //if discount apply for all product, we fillter by all product of specific shop
         if(discount_applies_to === 'all'){
             products = await findAllProducts(
                 limit,
@@ -106,9 +91,13 @@ class DiscountService{
                 },
                 ['product_name']
             )
-            console.log('this is products ',products)
         };
 
+        /*
+            if discount apply for specific product we filter by all product
+            which is in discount_product_ids[]
+            $in operator selects the documents where the value of a field equals any value in the specified array
+        */
         if(discount_applies_to === 'specific'){
             products = await findAllProducts(
                limit,
@@ -124,14 +113,9 @@ class DiscountService{
         return products
     }
 
-    /*
-        get all discount code of shop
-    */
-
     static async getAllDiscountCodesByShop(
         { limit, page, shopId }:IDiscountRequest
     ){
-        console.log(`this is limit${limit} and page ${page} and shopId ${shopId}`)
         const discounts = await findAllDiscountCodesSelect(
             limit,
             page,
@@ -146,7 +130,7 @@ class DiscountService{
         return discounts
     }
 
-    static async getDiscountAmount( {codeId, userId, shopId,products}: IDiscountRequest ){
+    static async getDiscountAmount({ codeId, userId, shopId, products }: IDiscountRequest){
         const foundDiscount = await checkDiscountExists({
             discount_code:codeId,
             discount_shopId:convertToObjectIdMongodb(shopId),
@@ -182,7 +166,7 @@ class DiscountService{
             }
         }
 
-        //
+        //check wheather discount had maximum value
         if(discount_max_uses_per_user > 0){
             const userUserDiscount = discount_users_used.find(element => element.toString() === userId)
             if(userUserDiscount){

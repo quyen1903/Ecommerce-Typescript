@@ -1,6 +1,7 @@
 import { SortOrder, Types, Document, Model } from "mongoose";
 import { IProduct, product } from "../product.model"
 import { getSelectData, unGetSelectData } from "../../utils/utils";
+import { ICheckoutRequest, Ishop_order_ids } from "../../controller/checkout.controller";
 
 interface queries{
     query: {
@@ -10,6 +11,16 @@ interface queries{
     };
     limit: number;
     skip: number;
+}
+
+const queryProduct = async (query: any, limit: number, skip: number)=>{
+    return await product.find(query)
+    .populate('product_shop', 'name email -_id')
+    .sort({updateAt: -1})
+    .skip(skip)
+    .limit(limit)
+    .lean()
+    .exec()
 }
 
 export const findAllDraftsForShop = async( {query, limit, skip}: queries)=>{
@@ -111,13 +122,16 @@ export const getProductById = async (productId: string)=>{
     return await product.findOne({_id: productId}).lean()
 }
 
-const queryProduct = async (query: any, limit: number, skip: number)=>{
-    return await product.find(query)
-    .populate('product_shop', 'name email -_id')//replace product_shop's objectId by name, email
-    .sort({updateAt: -1})
-    .skip(skip)
-    .limit(limit)
-    .lean()
-    .exec()
+export const checkProductByServer = async function(products:Ishop_order_ids['item_products']){
+    const result = await Promise.all(products.map(async product=>{
+        const foundProduct = await getProductById(product.productId)
+        if(foundProduct){
+            return{
+                price:foundProduct.product_price,
+                quantity:product.quantity,
+                productId:product.productId
+            }
+        }
+    }))
+    return result as unknown as Ishop_order_ids['item_products'];
 }
-
