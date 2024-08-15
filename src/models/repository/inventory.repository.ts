@@ -1,4 +1,5 @@
 import Inventory,{ Iinventory } from '../inventory.model';
+import { Types } from 'mongoose';
 
 export const insertInventory = async(
     productId:Iinventory['productId'],
@@ -14,22 +15,22 @@ export const insertInventory = async(
     })
 }
 
-// const reservationInventory = async ({productId, quantity, cartId})=>{
-//     const query = {
-//         inven_productId: new Types.ObjectId(productId),
-//         inven_stock: {$gte: quantity},
+export const reservationInventory = async ({productId, quantity, cartId}:{productId: string, quantity: number, cartId: string})=>{
+    const query = {
+        inven_productId: new Types.ObjectId(productId),
+        inven_stock: {$gte: quantity},
 
-//     },updateSet ={
-//         $inc:{
-//             inven_stock: -quantity
-//         },
-//         $push:{
-//             inven_reservations:{
-//                 quantity,
-//                 cartId,
-//                 createOn:new Date()
-//             }
-//         }
-//     },options = {upsert:true, new:true}
-//     return await inventory.updateOne(query, updateSet)
-// }
+    },updateSet ={
+        $inc:{
+            inven_stock: -quantity
+        },
+        $push:{
+            inven_reservations:{
+                quantity,
+                cartId,
+                createOn:new Date()
+            }
+        }
+    },options = {upsert:true, new:true}
+    return await Inventory.updateOne(query, updateSet)
+}

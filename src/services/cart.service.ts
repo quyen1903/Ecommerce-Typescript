@@ -1,5 +1,5 @@
 import { ICartRequest } from "../controller/cart.controller";
-import cart from '../models/cart.model'
+import cart from '../models/cart.model';
 import { getProductById } from "../models/repository/product.repository";
 import { NotFoundError } from '../core/error.response';
 

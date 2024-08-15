@@ -1,6 +1,6 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import { apiKey, permission } from '../auth/checkAuth';
-import { pushToLogDiscord } from '../middleware';
+import { pushToLogDiscord } from '../middleware/discord.middlewares';
 
 import access from './access';
 import cart from'./cart'

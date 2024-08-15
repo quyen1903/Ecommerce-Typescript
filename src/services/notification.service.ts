@@ -1,6 +1,6 @@
 import NOTI from'../models/notification.model';
 
-const pushNotiToSystem = async ({type = 'SHOP-001', receivedId = 1, senderId = 1, options = {}})=>{
+export const pushNotiToSystem = async ({type = 'SHOP-001', receivedId = 1, senderId = 1, options = {}})=>{
     let noti_content
 
     if(type === 'SHOP-001'){
@@ -20,7 +20,7 @@ const pushNotiToSystem = async ({type = 'SHOP-001', receivedId = 1, senderId = 1
     return newNoti
 }
 
-const listNotiByUser = async({userId = 1, type = 'ALL', isRead = false})=>{
+export const listNotiByUser = async({userId = 1, type = 'ALL', isRead = false})=>{
     const match  = {noti_receivedId: userId}
     // if(type !== 'ALL'){
     //     match['noti_type'] = type
@@ -49,8 +49,4 @@ const listNotiByUser = async({userId = 1, type = 'ALL', isRead = false})=>{
             }
         }
     ])
-}
-module.exports ={
-    pushNotiToSystem,
-    listNotiByUser
 }
