@@ -5,8 +5,13 @@
 const { createClient } = require('redis');
 import { promisify } from 'util';
 import { reservationInventory } from'../models/repository/inventory.repository';
-
-const redisClient = createClient();
+const redisClient = createClient({
+    password: process.env.REDIS_PASSWORD as string,
+    socket: {
+        host: process.env.REDIS_HOST as string,
+        port: 16457
+    }
+});
 
 redisClient.on('error', (error: Error) => {
     console.error('Redis Client Error', error);
@@ -53,3 +58,5 @@ export const releaseLock = async (keyLock: string) =>{
     const delAsyncKey = promisify(redisClient.del).bind(redisClient)
     return await delAsyncKey(keyLock)
 }
+
+export default redisClient

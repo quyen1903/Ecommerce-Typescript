@@ -7,6 +7,8 @@ import morgan from "morgan";
 import instanceMongodb from "./database/init.mongodb";
 import router from './routes';
 import CheckConnect from './helper/check.connect';
+import productTest from "./test/product.test"
+import inventoryTest from './test/inventory.test';
 
 const app: Express = express();
 
@@ -18,6 +20,15 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended:true
 }));
+
+/*
+    redis pubsub
+    we create one object of inventory test to subscribe
+    then we publish on product test
+    and our code works
+*/
+inventoryTest;
+productTest.purchaseProduct("product:001",10)
 
 /* init mongodb */
 instanceMongodb;
