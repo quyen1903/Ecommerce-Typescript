@@ -6,7 +6,11 @@ ts-node .\server.ts
 
 please make sure you have postman and mongodb in you local machine
 and we also need mongodb compass to test, for sure
-i also upload .env file to run project.
+
+you cannot run this project without redis, and I use all default method of npm redis
+reference this command to start redis via docker
+docker run -p 6379:6379 -it redis/redis-stack-server:latest
+
 
 JWT is nothing to do with authentication
 JWT take responsibility for authorization
