@@ -39,6 +39,7 @@
     "mongoose": "^8.4.5",
     "morgan": "^1.10.0",
     "redis": "^4.7.0",
+    "redlock": "^5.0.0-beta.2",
     "slugify": "^1.6.6"
   }
 }

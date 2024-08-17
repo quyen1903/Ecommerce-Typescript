@@ -15,6 +15,7 @@ export const insertInventory = async(
     })
 }
 
+//this function subtract number of quantity which user order
 export const reservationInventory = async ({productId, quantity, cartId}:{productId: string, quantity: number, cartId: string})=>{
     const query = {
         inven_productId: new Types.ObjectId(productId),

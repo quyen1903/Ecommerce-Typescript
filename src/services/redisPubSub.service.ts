@@ -3,7 +3,6 @@ import { createClient, RedisClientType } from 'redis';
 class RedisPubSubService {
     private subscriber!: RedisClientType;
     private publisher!: RedisClientType;
-    private isInitialized = false;
     private initializationPromise: Promise<void>;
     private redisString = {
         password: process.env.REDIS_PASSWORD as string,
@@ -28,9 +27,6 @@ class RedisPubSubService {
 
         await this.connectClient(this.subscriber);
         await this.connectClient(this.publisher);
-
-        //this line of code make sure we invoke  publish and subscribe after we successfully init a client
-        this.isInitialized = true;
         console.log('Redis clients initialized');
     }
 
@@ -46,9 +42,6 @@ class RedisPubSubService {
 
     private async ensureInitialized() {
         await this.initializationPromise;
-        if (!this.isInitialized) {
-            throw new Error('Redis clients not initialized');
-        }
     }
 
     async publish(channel: string, message: string) {
