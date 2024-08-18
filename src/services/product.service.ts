@@ -14,11 +14,18 @@ import {
 import { flattenNestedObject } from "../utils/utils"
 import { insertInventory } from "../models/repository/inventory.repository";
 import { IProductRequest } from "../controller/product.controller";
+import { Notifications } from "./notification.service";
+import { Types } from "mongoose";
 
-interface IfindAll{
+interface findAll{
     product_shop: IProduct['product_shop'],
     limit?: number,
     skip?: number
+}
+
+interface publish {
+    product_shop: Types.ObjectId; 
+    product_id: string;
 }
 
 class Factory{
@@ -46,27 +53,21 @@ class Factory{
     
 
     //query
-    static async findAllDraftsForShop({product_shop, limit = 50, skip = 0}: IfindAll){
+    static async findAllDraftsForShop({product_shop, limit = 50, skip = 0}: findAll){
         const query = {product_shop, isDraft:true}
         return await findAllDraftsForShop({query, limit, skip})
     }
 
-    static async findAllPublishForShop({ product_shop, limit = 50, skip = 0}: IfindAll){
+    static async findAllPublishForShop({ product_shop, limit = 50, skip = 0}: findAll){
         const query = {product_shop, isPublished:true}
         return await findAllPublishForShop({query, limit, skip})
     }
 
-    static async publishProductByShop( 
-        {product_shop, product_id}: 
-        {product_shop: IProduct['product_shop'], product_id: string}
-    ){
+    static async publishProductByShop({product_shop, product_id}: publish){
         return await publishProductByShop({product_shop, product_id})
     }
 
-    static async unPublishProductByShop(
-        {product_shop, product_id}: 
-        {product_shop: IProduct['product_shop'], product_id: string}
-    ){
+    static async unPublishProductByShop({product_shop, product_id}: publish){
         return await unPublishProductByShop({product_shop, product_id})
     }
 
@@ -115,7 +116,21 @@ class Product{
 
     async createProduct(subClassId: IProduct['product_shop']): Promise<IProduct>{
         const newProduct = await product.create({ ...this, _id: subClassId });
-        if(newProduct) await insertInventory( newProduct._id, this.product_shop, this.product_quantity )
+        if(newProduct) await insertInventory({
+            productId: newProduct._id,
+            shopId: this.product_shop,
+            stock: this.product_quantity,
+            location: "unknow"
+        })
+        Notifications.pushNotiToSystem({
+            type:'SHOP-001',
+            receivedId:"1",
+            senderId:this.product_shop.toString(),
+            options:{
+                product_name:this.product_name,
+                shop_name:this.product_shop
+            }
+        }).then(rs => console.log(rs)).catch(error => console.error())
         return newProduct;
     };
 

@@ -26,7 +26,7 @@ export class CommentService{
             comment_content:content,
             comment_parentId:parentCommentId
         })
-        let rightValue;
+        let rightValue: number;
         if(parentCommentId){
             //reply comment
             const parentComment = await Comment.findById(parentCommentId)

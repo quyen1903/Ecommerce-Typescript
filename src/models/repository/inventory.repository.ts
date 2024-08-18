@@ -1,17 +1,17 @@
 import Inventory,{ Iinventory } from '../inventory.model';
 import { Types } from 'mongoose';
 
-export const insertInventory = async(
-    productId:Iinventory['productId'],
-    shopId:Iinventory['shopId'], 
-    stock:Iinventory['stock'], 
-    location = 'unKnow'
-)=>{
+export const insertInventory = async ({ productId ,shopId , stock, location}:{
+    productId:Types.ObjectId,
+    shopId:Types.ObjectId,
+    stock: number,
+    location: string,
+})=>{
     return await Inventory.create({
         productId: productId,
+        shopId: shopId,
         stock: stock,
         location: location,
-        shopId: shopId
     })
 }
 
