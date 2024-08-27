@@ -1,7 +1,6 @@
 import { model, Schema, Document, Types }  from "mongoose";
 
 export interface IKeyToken extends Document{
-    _id:Types.ObjectId;
     userId: Types.ObjectId;
     publicKey: string;
     refreshTokensUsed: string[];
@@ -14,23 +13,10 @@ const COLLECTION_NAME='Keys'
 
 
 const keyTokenSchema:Schema =new Schema<IKeyToken>({
-    userId:{
-        type: Schema.Types.ObjectId,
-        required:true,
-        ref:'Shop'
-    },
-    publicKey:{
-        type:String,
-        required:true,
-    },
-    refreshTokensUsed:{
-        type:[String],
-        default:[] as string[]
-    },
-    refreshToken: {
-        type:String,
-        required:true
-    }
+    userId:{ type: Schema.Types.ObjectId, required:true, ref:'Shop' },
+    publicKey:{ type:String, required:true },
+    refreshTokensUsed:{ type:[String], default:[] as string[] },
+    refreshToken: {type:String, required:true }
 
 },{
     collection:COLLECTION_NAME,

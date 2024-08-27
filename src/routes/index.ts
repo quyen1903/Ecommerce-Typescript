@@ -10,6 +10,7 @@ import discount from './discount'
 import inventory from './inventory'
 import notification from './notification'
 import product from './product'
+import upload from './upload'
 
 const router = express.Router();
 
@@ -22,8 +23,9 @@ router.use('/v1/api/checkout', checkout)
 router.use('/v1/api/comment', comment);
 router.use('/v1/api/discount', discount)
 router.use('/v1/api/inventory', inventory);
-router.use('/v1/api/notification', notification)
+router.use('/v1/api/notification', notification);
 router.use('/v1/api/product', product);
+router.use('/v1/api/upload',upload)
 router.use('/v1/api', access);
 
 export default router;

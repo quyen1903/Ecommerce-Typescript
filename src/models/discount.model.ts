@@ -5,6 +5,7 @@ const COLLECTION_NAME='discounts'
 // Declare the Schema of the Mongo model
 
 export interface IdiscountModel extends Document{
+    _id: Types.ObjectId;
     discount_name: string;
     discount_description: string;
     discount_type: string;

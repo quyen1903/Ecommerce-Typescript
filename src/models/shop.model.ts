@@ -11,7 +11,6 @@ export enum RoleShop{
 }
 
 export interface IShop extends Document{
-    _id:Types.ObjectId;
     name: string;
     salt: string;
     email: string;

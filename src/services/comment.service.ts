@@ -53,7 +53,7 @@ export class CommentService{
             })
         }else{
             /**
-             * parent comment not existed means we did need to deal with it.
+             * parent comment not existed 
              */
             const maxRightValue = await Comment.findOne({
                 comment_productId: convertToObjectIdMongodb(productId),  

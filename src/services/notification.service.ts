@@ -31,6 +31,7 @@ export class Notifications{
         /*
             aggregate all notification document
             $match to filter all document which match 
+            $project to pass requested field to next stage in pipeline
         */
         return await NOTI.aggregate([
             {

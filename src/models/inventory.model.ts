@@ -8,7 +8,6 @@ export interface IcartModel{
 }
 // Declare the Schema of the Mongo model
 export interface Iinventory extends Document{
-    _id: Types.ObjectId;
     productId: Types.ObjectId;
     location: string;
     stock: number;

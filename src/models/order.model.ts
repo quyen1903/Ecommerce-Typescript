@@ -1,4 +1,4 @@
-import { model, Schema, Document} from 'mongoose';
+import { model, Schema, Document, Types} from 'mongoose';
 
 const DOCUMENT_NAME='Order'
 const COLLECTION_NAME='Orders'
@@ -14,20 +14,7 @@ export interface IOrderModel extends Document{
 
 const orderSchema: Schema = new Schema<IOrderModel>({
     order_userId:{ type:Number, required:true },
-    /*
-        order_checkout = {
-            totalPrice,
-            totalApplyDiscount,
-            feeShip
-        }
-    */
     order_checkout:{ type:Object, default:{} },
-    /*
-        street,
-        city,
-        state, 
-        country
-    */
     order_payment:{ type:Object, default: {} },
     order_product:{ type:Array, required:true },
     order_trackingNumber:{ type:String, default: '#0000127032024' },

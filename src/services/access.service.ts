@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import Shop, { IShop, RoleShop } from '../models/shop.model';
+import Shop, { RoleShop } from '../models/shop.model';
 import { BadRequestError, ForbiddenError, AuthFailureError } from "../core/error.response";
 import KeyTokenService from './keyToken.service';
 import { createTokenPair } from '../auth/authUtils';
