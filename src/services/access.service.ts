@@ -1,4 +1,7 @@
 import crypto from 'node:crypto';
+import { LoginDTO,RegisterDTO } from '../dto/access.dto';
+import { validate, ValidationError } from 'class-validator';
+import { plainToClass } from 'class-transformer';
 import Shop, { RoleShop } from '../models/shop.model';
 import { BadRequestError, ForbiddenError, AuthFailureError } from "../core/error.response";
 import KeyTokenService from './keyToken.service';
@@ -7,7 +10,6 @@ import { getInfoData } from '../utils/utils';
 import { IKeyToken } from '../models/keytoken.model';
 import { Types } from 'mongoose';
 import { IdecodeUser } from '../auth/authUtils';
-import { IAccessRequest } from '../controller/access.controller';
 
 class AccessService{
     private static generateKeyPair(){
@@ -23,6 +25,18 @@ class AccessService{
             }
         })
         return {publicKey, privateKey}
+    }
+
+    private static logger(errors: ValidationError[]){
+        errors.forEach((error)=>{
+            console.log(`Property: ${error.property}`);
+            if(error.constraints){
+                Object.keys(error.constraints).forEach((key)=>{
+                    console.log(`- ${error.constraints![key]}`);
+                    throw new BadRequestError(`- ${error.constraints![key]}`)
+                })
+            }
+        })
     }
 
     private static async findShop( email: string ){
@@ -75,7 +89,7 @@ class AccessService{
         return delKey 
     };
 
-    static login = async({ email, password }:IAccessRequest)=>{
+    static login = async(login:LoginDTO)=>{
         /*
             1 - check email in database
             2 - match password
@@ -83,15 +97,19 @@ class AccessService{
             4 - generate tokens
             5 - get data return login
         */
+       const errors = await validate(login)
+       if(errors.length > 0){
+        this.logger(errors)
+       }
         // 1
-        const foundShop = await this.findShop(email)
+        const foundShop = await this.findShop(login.email)
         if(!foundShop) throw new BadRequestError('Shop not registed');
 
         // 2
         const isPasswordValid = await (async () => {
             const salt = foundShop.salt;
             return new Promise( function(resolve,reject){
-                crypto.pbkdf2( password, salt, 100, 64, 'sha512', function(err, derivedKey){
+                crypto.pbkdf2( login.password, salt, 100, 64, 'sha512', function(err, derivedKey){
                     if(err) reject;
                     resolve (derivedKey.toString('hex') === foundShop.password)
                 })
@@ -107,7 +125,7 @@ class AccessService{
 
         const { publicKey, privateKey } = this.generateKeyPair();
         const { _id:userId } = foundShop;
-        const tokens = await createTokenPair({userId,email}, publicKey, privateKey);
+        const tokens = await createTokenPair({userId,email: login.email}, publicKey, privateKey);
 
         //4n
         await KeyTokenService.createKeyToken({
@@ -123,25 +141,35 @@ class AccessService{
         }
     }
 
-    static async register({name, email, password}: IAccessRequest){
+    static async register(register: RegisterDTO){
         /**
-         * 1 - check wheather shop existed or not
-         * 2 - create salt and hashed password
-         * 3 - create new shop
-         * 4 - create public/private key pair and access/refresh token pair
-         * 5 - create keytoken which store publickey and refresh token in database
+         * 1 - validate input dataa
+         * 2 - check wheather shop existed or not
+         * 3 - create salt and hashed password
+         * 4 - create new shop
+         * 5 - create public/private key pair and access/refresh token pair
+         * 6 - create keytoken which store publickey and refresh token in database
         */
-
+        const errors = await validate(register);
+        if (errors.length > 0) {
+            this.logger(errors)
+        } 
         //1
-        const shopHolder = await this.findShop(email);
+        const shopHolder = await this.findShop(register.email);
         if(shopHolder) throw new BadRequestError('Shop already existed');
 
         //2
         const salt = crypto.randomBytes(32).toString()
-        const passwordHashed = crypto.pbkdf2Sync(password,salt,100,64,'sha512').toString('hex')
+        const passwordHashed = crypto.pbkdf2Sync(register.password,salt,100,64,'sha512').toString('hex')
 
         //3
-        const newShop = await Shop.create({name, salt, email, password:passwordHashed, roles:RoleShop.SHOP})
+        const newShop = await Shop.create({
+            name: register.name,
+            salt,
+            email: register.email,
+            password:passwordHashed,
+            roles:RoleShop.SHOP
+        })
 
         if(newShop){
             //4

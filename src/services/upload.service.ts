@@ -17,7 +17,7 @@ const uploadImageFromURL = async ()=>{
     }
 }
 
-const uploadImageFromLocal = async({path, folderName}:
+const uploadImageFromLocal = async({path, folderName = 'product/8409'}:
     {path: string, folderName?:string}
 )=>{
     try {
@@ -28,7 +28,12 @@ const uploadImageFromLocal = async({path, folderName}:
         console.log(result)
         return {
             image_url: result.secure_url,
-            shopId: 8409
+            shopId: 8409,
+            thumb_url: cloudinary.url(result.public_id,{
+                height: 100,
+                width: 100,
+                format: 'jpg'
+            })
         }
     } catch (error) {
         

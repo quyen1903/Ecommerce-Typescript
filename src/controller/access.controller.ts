@@ -1,14 +1,13 @@
 import { Request, Response, NextFunction } from 'express'; 
-import AccessService from "../services/access.service"
-import { SuccessResponse } from '../core/success.response'
-
-export interface IAccessRequest{
-    name: string;
-    email: string;
-    password: string
-}
+import AccessService from '../services/access.service';
+import { SuccessResponse } from '../core/success.response';
+import { RegisterDTO, LoginDTO } from '../dto/access.dto';
+import { validate } from 'class-validator'; 
+import { BadRequestError } from '../core/error.response';
 
 class AccessController{
+    //in register and login, we pass data from request body tp data transfer object (DTO)
+    //we pass instance of DTO to login and register method
     handlerRefreshToken = async(req: Request, res: Response, next: NextFunction)=>{
         new SuccessResponse({
             message:'get token success',
@@ -26,15 +25,21 @@ class AccessController{
         }).send(res)
     }
     login = async(req: Request, res: Response, next: NextFunction)=>{
+        const {email, password} = req.body;
+        const login = new LoginDTO(email, password);
+
         new SuccessResponse({
             message: 'login success',
-            metadata:await AccessService.login(req.body)
+            metadata:await AccessService.login(login)
         }).send(res)
     }
     register = async (req: Request, res: Response, next: NextFunction) => {
+        const {name, email, password} = req.body;
+        const register = new RegisterDTO(name, email, password);
+
         new SuccessResponse({
             message: 'register success',
-            metadata: await AccessService.register(req.body)
+            metadata: await AccessService.register(register)
         }).send(res);
     }
 

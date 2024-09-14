@@ -13,9 +13,9 @@ import {
 } from "../models/repository/product.repository";
 import { flattenNestedObject } from "../utils/utils"
 import { insertInventory } from "../models/repository/inventory.repository";
-import { IProductRequest } from "../controller/product.controller";
 import { Notifications } from "./notification.service";
 import { Types } from "mongoose";
+import { CreateProductDTO } from "../dto/product.dto";
 
 interface findAll{
     product_shop: IProduct['product_shop'],
@@ -35,14 +35,14 @@ class Factory{
         Factory.productRegistry[type] = classRefrerence
     }
 
-    static async createProduct( type: IProductRequest['product_type'], payload: IProductRequest){
+    static async createProduct( type: CreateProductDTO['product_type'], payload: {}){
         const productClass = Factory.productRegistry[type]
         if(!productClass) throw new BadRequestError(`Invalid Product Types ${type}`)
         return new productClass(payload).createProduct()
     }
 
     static async updateProduct(
-        type: IProductRequest['product_type'],
+        type: CreateProductDTO['product_type'],
         productId: string,
         payload:Object
     ){
@@ -114,7 +114,7 @@ class Product{
         this.product_type = product_type
     }
 
-    async createProduct(subClassId: IProduct['product_shop']): Promise<IProduct>{
+    async createProduct(subClassId: Types.ObjectId): Promise<IProduct>{
         const newProduct = await product.create({ ...this, _id: subClassId });
         if(newProduct) await insertInventory({
             productId: newProduct._id,

@@ -1,52 +1,61 @@
 import { Request, Response, NextFunction } from 'express'; 
 import { SuccessResponse } from '../core/success.response';
 import Factory from '../services/product.service';
-
-export interface IClothingRequest{
-    brand: string;
-    size: string;
-    material: string;
-};
-
-export interface IElectronicsRequest{
-    manufacturer: string;
-    models: string;
-    color: string;
-};
-
-export interface IFurnitureRequest{
-    brand: string;
-    size: string;
-    material: string;
-};
-
-export interface IProductRequest{
-    product_name: string;
-    product_thumb: string;
-    product_description: string;
-    product_price: number;
-    product_quantity: number;
-    product_type: 'Clothing' | 'Electronics' | 'Furniture';
-    product_attributes: IClothingRequest | IElectronicsRequest | IFurnitureRequest;
-}
+import { CreateProductDTO, UpdateProductDTO } from '../dto/product.dto';
 
 class ProductController{
 
     createProduct = async(req: Request, res: Response, next: NextFunction)=>{
+        const {
+            product_name,
+            product_thumb,
+            product_description,
+            product_price,
+            product_quantity,
+            product_type,
+            product_attributes
+        } =  req.body;
+        const product = new CreateProductDTO({
+            product_name,
+            product_thumb,
+            product_description,
+            product_price,
+            product_quantity,
+            product_type,
+            product_attributes
+        })
         new SuccessResponse({
             message: 'Create new product success!',
-            metadata: await Factory.createProduct(req.body.product_type, {
-                ...req.body,
+            metadata: await Factory.createProduct(product.product_type,{
+                ...product,
                 product_shop: req.user.userId
             })
         }).send(res)
     }
 
     updateProduct = async(req: Request, res: Response, next: NextFunction)=>{
+        const {
+            product_name,
+            product_thumb,
+            product_description,
+            product_price,
+            product_quantity,
+            product_type,
+            product_attributes
+        } =  req.body;
+        const product = new UpdateProductDTO({
+            product_name,
+            product_thumb,
+            product_description,
+            product_price,
+            product_quantity,
+            product_type,
+            product_attributes
+        })
         new SuccessResponse({
             message: 'Update new product success!',
-            metadata: await Factory.updateProduct(req.body.product_type, req.params.productId, {
-                ...req.body,
+            metadata: await Factory.updateProduct(product.product_type, req.params.productId, {
+                ...product,
                 product_shop: req.user.userId
             })
         }).send(res)
