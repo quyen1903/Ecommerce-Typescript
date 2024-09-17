@@ -1,10 +1,9 @@
-import { IDiscountRequest } from "../controller/discount.controller";
 import { BadRequestError, NotFoundError } from "../core/error.response";
 import discount  from "../models/discount.model";
 import { convertToObjectIdMongodb } from "../utils/utils";
 import { findAllDiscountCodesSelect, checkDiscountExists } from "../models/repository/discount.repository";
 import { findAllProducts } from "../models/repository/product.repository";
-import { AmountDiscountDTO, CreateDiscountDTO } from "../dto/discount.dto";
+import { AmountDiscountDTO, CreateDiscountDTO, GetListDiscount } from "../dto/discount.dto";
 /*
     discount service
     1 generator discount code[shop/ admin]
@@ -66,7 +65,7 @@ class DiscountService{
     /*
         get all discount code available with products
     */
-    static async getAllDiscountCodesWithProduct({code, shopId, limit, page}:IDiscountRequest){
+    static async getAllDiscountCodesWithProduct({code, shopId, limit, page}:GetListDiscount){
         //check round
         const foundDiscount = await discount.findOne({
             discount_code:code,
@@ -115,7 +114,7 @@ class DiscountService{
     }
 
     static async getAllDiscountCodesByShop(
-        { limit, page, shopId }:IDiscountRequest
+        { limit, page, shopId }:GetListDiscount
     ){
         const discounts = await findAllDiscountCodesSelect(
             limit,
@@ -185,7 +184,7 @@ class DiscountService{
         }
     }
 
-    static async deleteDiscountCode({shopId, codeId}:IDiscountRequest){
+    static async deleteDiscountCode({shopId, codeId}:AmountDiscountDTO){
         const deleted = await discount.findOneAndDelete({
             discount_code:codeId,
             discount_shopId:convertToObjectIdMongodb(shopId)
@@ -195,7 +194,7 @@ class DiscountService{
         
     }
 
-    static async cancelDiscountCode({ codeId, shopId, userId }:IDiscountRequest){
+    static async cancelDiscountCode({ codeId, shopId, userId }:AmountDiscountDTO){
         const foundDiscount = await checkDiscountExists({
             model:discount,
             filter:{

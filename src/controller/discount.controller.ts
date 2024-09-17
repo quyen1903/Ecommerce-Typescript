@@ -1,35 +1,7 @@
 import DiscountService from "../services/discount.service";
 import { SuccessResponse } from'../core/success.response';
 import { Request, Response, NextFunction } from 'express'; 
-import { AmountDiscountDTO, CreateDiscountDTO } from "../dto/discount.dto";
-
-export interface IDiscountRequest {
-    name: string;
-    description: string;
-    type: string;
-    value:number;
-    code: string;
-    start_date: string; 
-    end_date: string; 
-    max_uses: number;
-    uses_count: number;
-    users_used: string[];
-    max_uses_per_user: number;
-    min_order_value: number
-    shopId: string;
-    is_active: boolean;
-    applies_to: string;
-    product_ids: string[];
-    limit: number;
-    page: number;
-    codeId: string,
-    userId: string,
-    products:{
-        productId: string,
-        quantity: number,
-        price: number
-    }[]
-}
+import { AmountDiscountDTO, CreateDiscountDTO, GetListDiscount } from "../dto/discount.dto";
 
 class DiscountController{
     createDiscountCode = async(req: Request, res: Response, next: NextFunction)=>{
@@ -50,7 +22,7 @@ class DiscountController{
         new SuccessResponse({
             message:'Successfully get all code',
             metadata:await DiscountService.getAllDiscountCodesByShop({
-                ...req.query as unknown as IDiscountRequest
+                ...req.query as unknown as GetListDiscount
             })
         }).send(res)
     }
@@ -69,7 +41,7 @@ class DiscountController{
         new SuccessResponse({
             message:'Successfully get all code with product',
             metadata:await DiscountService.getAllDiscountCodesWithProduct({
-                ...req.query as unknown as IDiscountRequest
+                ...req.query as unknown as GetListDiscount
             })
         }).send(res)
     }

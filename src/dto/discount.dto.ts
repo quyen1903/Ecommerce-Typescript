@@ -173,3 +173,38 @@ export class AmountDiscountDTO{
         this.products = products
     }
 }
+
+export class GetListDiscount{
+    @IsString()
+    @IsNotEmpty()
+    code: string;
+
+    @IsString()
+    @IsNotEmpty()
+    shopId: string;
+
+    @IsString()
+    @IsNotEmpty()
+    limit: number;
+
+    @IsString()
+    @IsNotEmpty()
+    page: number;
+
+    constructor({
+        code,
+        shopId,
+        limit,
+        page
+    }:{
+        code: string,
+        shopId: string,
+        limit: number,
+        page: number
+    }){
+        this.code = code,
+        this.shopId = shopId,
+        this.limit =limit,
+        this.page = page
+    }
+}
