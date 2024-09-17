@@ -3,9 +3,9 @@ import { BadRequestError } from '../core/error.response';
 import { checkProductByServer } from '../models/repository/product.repository';
 import DiscountService from './discount.service';
 import { ICheckoutRequest, Ishop_order_ids } from '../controller/checkout.controller';
-import { IDiscountRequest } from '../controller/discount.controller';
 import { acquireLock, releaseLock } from './redis.service';
-import order from '../models/order.model'
+import { AmountDiscountDTO } from '../dto/discount.dto';
+import order from '../models/order.model';
 
 
 class CheckoutService{
@@ -57,7 +57,7 @@ class CheckoutService{
                     userId,
                     shopId,
                     products: checkProductServer
-                }as IDiscountRequest)
+                }as AmountDiscountDTO)
                 //total discount amout
                 checkout_order.totalDiscount += discount
 
