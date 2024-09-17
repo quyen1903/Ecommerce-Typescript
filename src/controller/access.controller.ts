@@ -25,6 +25,7 @@ class AccessController{
         }).send(res)
     }
     login = async(req: Request, res: Response, next: NextFunction)=>{
+        console.log('this is user',req.headers)
         const {email, password} = req.body;
         const login = new LoginDTO(email, password);
 

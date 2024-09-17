@@ -1,6 +1,7 @@
 import DiscountService from "../services/discount.service";
 import { SuccessResponse } from'../core/success.response';
 import { Request, Response, NextFunction } from 'express'; 
+import { AmountDiscountDTO, CreateDiscountDTO } from "../dto/discount.dto";
 
 export interface IDiscountRequest {
     name: string;
@@ -32,11 +33,15 @@ export interface IDiscountRequest {
 
 class DiscountController{
     createDiscountCode = async(req: Request, res: Response, next: NextFunction)=>{
+        const body = req.body;
+        const discount = new CreateDiscountDTO(body);
+        const shopId = req.user.userId.toString()
+        const shopIdString = shopId.toString()
         new SuccessResponse({
             message:'Successfully generate code',
             metadata:await DiscountService.createDiscountCode({
-                ...req.body,
-                shopId:req.user.userId
+                ...discount,
+                shopId:shopIdString
             })
         }).send(res)
     }
@@ -51,11 +56,12 @@ class DiscountController{
     }
 
     getDiscountAmount = async(req: Request, res: Response, next: NextFunction)=>{
+        const body = req.body
+        const amountDiscount = new AmountDiscountDTO(body)
+        console.log('this is amount discount',amountDiscount)
         new SuccessResponse({
             message:'Successfully get Amount',
-            metadata:await DiscountService.getDiscountAmount({
-                ...req.body,
-            })
+            metadata:await DiscountService.getDiscountAmount(amountDiscount)
         }).send(res)
     }
 

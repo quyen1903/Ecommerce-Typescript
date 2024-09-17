@@ -2,7 +2,9 @@ import 'dotenv/config'
 import compression from 'compression'
 import express, { Express, Request, Response, NextFunction } from "express";
 import helmet from "helmet";
-import morgan from 'morgan'
+import morgan from 'morgan';
+import 'reflect-metadata';
+
 
 
 import instanceMongodb from "./database/init.mongodb";

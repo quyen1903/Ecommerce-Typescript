@@ -1,7 +1,13 @@
-import { IsNotEmpty, IsOptional, IsNumber, IsString, IsIn } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsNumber, IsString, IsEnum, IsIn } from 'class-validator';
 import {CreateClothingDTO, UpdateClothingDTO} from './product/clothing.products';
 import {CreateElectronicsDTO, UpdateElectronicsDTO} from './product/electronic.products';
 import {CreateFurnitureDTO, UpdateFurnitureDTO} from './product/furniture.products';
+
+enum ProductType{
+    CLOTHING = 'Clothing',
+    ELECTRONICS= 'Electronics',
+    FURNITURE= 'Furniture'
+}
 
 export class CreateProductDTO {
     @IsNotEmpty()
@@ -25,8 +31,8 @@ export class CreateProductDTO {
     product_quantity: number;
 
     @IsNotEmpty()
-    @IsIn(['Clothing', 'Electronics', 'Furniture'])
-    product_type: 'Clothing' | 'Electronics' | 'Furniture';
+    @IsEnum(ProductType)
+    product_type: ProductType
 
     @IsNotEmpty()
     @IsIn([CreateClothingDTO, CreateElectronicsDTO, CreateFurnitureDTO])
@@ -46,7 +52,7 @@ export class CreateProductDTO {
         product_description: string,
         product_price: number,
         product_quantity: number,
-        product_type: 'Clothing' | 'Electronics' | 'Furniture',
+        product_type:ProductType,
         product_attributes: CreateClothingDTO | CreateElectronicsDTO | CreateFurnitureDTO
     }
         
@@ -82,9 +88,9 @@ export class UpdateProductDTO {
     @IsNumber()
     product_quantity: number;
 
-    @IsNotEmpty()
-    @IsIn(['Clothing', 'Electronics', 'Furniture'])
-    product_type: 'Clothing' | 'Electronics' | 'Furniture';
+    @IsOptional()
+    @IsEnum(ProductType)
+    product_type:ProductType;
 
     @IsOptional()
     @IsIn([UpdateClothingDTO, UpdateElectronicsDTO, UpdateFurnitureDTO])
@@ -104,7 +110,7 @@ export class UpdateProductDTO {
         product_description: string,
         product_price: number,
         product_quantity: number,
-        product_type: 'Clothing' | 'Electronics' | 'Furniture',
+        product_type: ProductType,
         product_attributes: UpdateClothingDTO | UpdateElectronicsDTO | UpdateFurnitureDTO
     }
         

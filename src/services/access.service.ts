@@ -1,7 +1,6 @@
 import crypto from 'node:crypto';
 import { LoginDTO,RegisterDTO } from '../dto/access.dto';
 import { validate, ValidationError } from 'class-validator';
-import { plainToClass } from 'class-transformer';
 import Shop, { RoleShop } from '../models/shop.model';
 import { BadRequestError, ForbiddenError, AuthFailureError } from "../core/error.response";
 import KeyTokenService from './keyToken.service';
@@ -25,6 +24,16 @@ class AccessService{
             }
         })
         return {publicKey, privateKey}
+    }
+
+    //when resolve, value of type will be string
+    private static hashPassword(password:string, salt:string):Promise<string> {
+        return new Promise((resolve, reject) => {
+            crypto.pbkdf2(password, salt, 100,64,'sha512', (err, key) => {
+                if (err) return  reject(err)
+                resolve(key.toString('hex'));
+            })
+        });
     }
 
     private static logger(errors: ValidationError[]){
@@ -106,17 +115,9 @@ class AccessService{
         if(!foundShop) throw new BadRequestError('Shop not registed');
 
         // 2
-        const isPasswordValid = await (async () => {
-            const salt = foundShop.salt;
-            return new Promise( function(resolve,reject){
-                crypto.pbkdf2( login.password, salt, 100, 64, 'sha512', function(err, derivedKey){
-                    if(err) reject;
-                    resolve (derivedKey.toString('hex') === foundShop.password)
-                })
-            })
-        })();
-        if (!isPasswordValid) throw new AuthFailureError('wrong password !!!');
-
+        const passwordHashed =await this.hashPassword(login.password, foundShop.salt);
+        if (passwordHashed !== foundShop.password) throw new AuthFailureError('Wrong password!!!');
+        
         /**
          * 3
          * re-create key-pair for each workstation
@@ -159,8 +160,9 @@ class AccessService{
         if(shopHolder) throw new BadRequestError('Shop already existed');
 
         //2
-        const salt = crypto.randomBytes(32).toString()
-        const passwordHashed = crypto.pbkdf2Sync(register.password,salt,100,64,'sha512').toString('hex')
+        const salt = crypto.randomBytes(32).toString();
+        const passwordHashed =await this.hashPassword(register.password, salt)
+        console.log('this is password hashed',passwordHashed)
 
         //3
         const newShop = await Shop.create({

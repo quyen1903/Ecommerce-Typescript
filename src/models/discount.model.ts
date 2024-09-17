@@ -1,7 +1,7 @@
 import { model,Schema, Types, Document } from 'mongoose'; 
 
 const DOCUMENT_NAME='Discount'
-const COLLECTION_NAME='discounts'
+const COLLECTION_NAME='Discounts'
 // Declare the Schema of the Mongo model
 
 export interface IdiscountModel extends Document{

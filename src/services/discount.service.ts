@@ -4,6 +4,7 @@ import discount  from "../models/discount.model";
 import { convertToObjectIdMongodb } from "../utils/utils";
 import { findAllDiscountCodesSelect, checkDiscountExists } from "../models/repository/discount.repository";
 import { findAllProducts } from "../models/repository/product.repository";
+import { AmountDiscountDTO, CreateDiscountDTO } from "../dto/discount.dto";
 /*
     discount service
     1 generator discount code[shop/ admin]
@@ -15,7 +16,7 @@ import { findAllProducts } from "../models/repository/product.repository";
 */
 
 class DiscountService{
-    static async createDiscountCode(payload:IDiscountRequest){
+    static async createDiscountCode(payload:CreateDiscountDTO){
         const { name, description, type, value, code, start_date, end_date, max_uses, uses_count,
             users_used,max_uses_per_user, min_order_value, shopId, is_active, applies_to, product_ids
         } = payload
@@ -130,7 +131,7 @@ class DiscountService{
         return discounts
     }
 
-    static async getDiscountAmount({ codeId, userId, shopId, products }: IDiscountRequest){
+    static async getDiscountAmount({ codeId, userId, shopId, products }: AmountDiscountDTO){
         const foundDiscount = await checkDiscountExists({
             discount_code:codeId,
             discount_shopId:convertToObjectIdMongodb(shopId),
