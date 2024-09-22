@@ -4,6 +4,7 @@ import { convertToObjectIdMongodb } from "../utils/utils";
 import { findAllDiscountCodesSelect, checkDiscountExists } from "../models/repository/discount.repository";
 import { findAllProducts } from "../models/repository/product.repository";
 import { AmountDiscountDTO, CreateDiscountDTO, GetListDiscount } from "../dto/discount.dto";
+import { Types } from "mongoose";
 /*
     discount service
     1 generator discount code[shop/ admin]
@@ -15,13 +16,15 @@ import { AmountDiscountDTO, CreateDiscountDTO, GetListDiscount } from "../dto/di
 */
 
 class DiscountService{
-    static async createDiscountCode(payload:CreateDiscountDTO){
+    static async createDiscountCode({payload, shopId}:{payload:CreateDiscountDTO, shopId:Types.ObjectId}){
         const { name, description, type, value, code, start_date, end_date, max_uses, uses_count,
-            users_used,max_uses_per_user, min_order_value, shopId, is_active, applies_to, product_ids
+            users_used,max_uses_per_user, min_order_value, is_active, applies_to, product_ids
         } = payload
 
         //loop through 
-        const objectId_users_used = users_used.map((x)=> convertToObjectIdMongodb(x))
+        const objectId_users_used = users_used
+        .filter((x) => x && x.trim() !== "") // Remove empty strings
+        .map((x) => convertToObjectIdMongodb(x));
 
 
         if(new Date() < new Date(start_date) || new Date() > new Date(end_date)){
@@ -34,7 +37,7 @@ class DiscountService{
 
         const foundDiscount = await discount.findOne({
             discount_code:code,
-            discount_shopId: convertToObjectIdMongodb(shopId)
+            discount_shopId: shopId
         }).lean()
 
         if(foundDiscount && foundDiscount.discount_is_active){

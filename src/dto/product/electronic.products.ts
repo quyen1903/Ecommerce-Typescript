@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateElectronicsDTO {
+export class Electronics{
   @IsNotEmpty()
   @IsString()
   manufacturer: string;
@@ -10,20 +10,6 @@ export class CreateElectronicsDTO {
   models: string;
 
   @IsNotEmpty()
-  @IsString()
-  color: string;
-}
-
-export class UpdateElectronicsDTO {
-  @IsOptional()
-  @IsString()
-  manufacturer: string;
-
-  @IsOptional()
-  @IsString()
-  models: string;
-
-  @IsOptional()
   @IsString()
   color: string;
 }

@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
-export class CreateFurnitureDTO {
+export class Furniture{
   @IsNotEmpty()
   @IsString()
   brand: string;

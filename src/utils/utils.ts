@@ -38,12 +38,7 @@ function collectValidationKeys(error: ValidationError): string[] {
 
 // Modified validator function to handle validation and log errors
 export async function validator(input: {}): Promise<void> {
-    const errors = await validate(input, {
-        // skipMissingProperties: false, // Ensure all required fields are validated
-        // whitelist: true,              // Strip unknown properties
-        // forbidNonWhitelisted: true,    // Throw error for unknown properties
-        // forbidUnknownValues: true,     // Forbid any value that doesn't match the expected type
-    });
+    const errors = await validate(input);
 
     if (errors.length > 0) {
         // Collect all constraint keys from the validation errors

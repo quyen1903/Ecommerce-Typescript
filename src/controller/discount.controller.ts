@@ -2,25 +2,18 @@ import DiscountService from "../services/discount.service";
 import { SuccessResponse } from'../core/success.response';
 import { Request, Response, NextFunction } from 'express'; 
 import { AmountDiscountDTO, CreateDiscountDTO, GetListDiscount } from "../dto/discount.dto";
-import { validate } from 'class-validator';
-import { DTOLogger } from '../utils/utils';
+import { validator } from '../utils/utils';
 
 class DiscountController{
     //validate input data
-    private async validator(errors:{}){
-        const error = await validate(errors);
-        DTOLogger(error);
-    }
 
     createDiscountCode = async(req: Request, res: Response, next: NextFunction)=>{
         const payload = new CreateDiscountDTO(req.body);
-        this.validator(payload);
-        console.log(payload)
+        await validator(payload);
         
-        const shopId = req.user.userId.toString()
         const result = await DiscountService.createDiscountCode({
-            ...payload,
-            shopId:shopId
+            payload,
+            shopId:req.user.userId
         })
         new SuccessResponse({
             message: 'Successfully generate code',
@@ -38,12 +31,13 @@ class DiscountController{
     }
 
     getDiscountAmount = async(req: Request, res: Response, next: NextFunction)=>{
-        const body = req.body
-        const amountDiscount = new AmountDiscountDTO(body)
-        console.log('this is amount discount',amountDiscount)
+        const payload = new AmountDiscountDTO(req.body);
+        await validator(payload);
+        const result = await DiscountService.getDiscountAmount(payload)
+        
         new SuccessResponse({
             message:'Successfully get Amount',
-            metadata:await DiscountService.getDiscountAmount(amountDiscount)
+            metadata: result
         }).send(res)
     }
 

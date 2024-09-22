@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsInt, IsString, IsArray, ArrayMinSize, IsBoolean, isNotEmpty, IsEnum, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsInt, IsString, IsArray, ArrayMinSize, IsBoolean, ValidateNested, IsEnum, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 
 enum Applies_to{
@@ -59,10 +59,6 @@ export class CreateDiscountDTO{
     @IsNotEmpty()
     min_order_value: number;
 
-    @IsString()
-    @IsNotEmpty()    
-    shopId: string;
-
     @IsBoolean()
     is_active: boolean;
 
@@ -71,6 +67,8 @@ export class CreateDiscountDTO{
     applies_to: Applies_to;
 
     @IsArray()
+    @IsNotEmpty()
+    @ValidateNested()
     @IsString({ each: true })  // "each" tells class-validator to run the validation on each item of the array
     product_ids: string[];
 
@@ -157,6 +155,10 @@ export class AmountDiscountDTO{
 
     //When you are using arrays you must provide a type of the object that array contains.
     //This type, you specify in a @Type() decorator:
+    @IsArray()
+    @IsNotEmpty()
+    @ValidateNested()
+    @IsString({ each: true })
     @Type(()=>Product)
     products:Product[]
 

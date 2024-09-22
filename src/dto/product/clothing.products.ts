@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
-export class CreateClothingDTO {
+export class Clothing{
   @IsNotEmpty()
   @IsString()
   brand: string;
@@ -13,18 +13,3 @@ export class CreateClothingDTO {
   @IsString()
   material: string;
 }
-
-export class UpdateClothingDTO {
-  @IsOptional()
-  @IsString()
-  brand: string;
-
-  @IsOptional()
-  @IsString()
-  size: string;
-
-  @IsOptional()
-  @IsString()
-  material: string;
-}
-

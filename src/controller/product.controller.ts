@@ -2,19 +2,14 @@ import { Request, Response, NextFunction } from 'express';
 import { SuccessResponse } from '../core/success.response';
 import Factory from '../services/product.service';
 import { CreateProductDTO, UpdateProductDTO } from '../dto/product.dto';
-import { validate } from 'class-validator'; 
-import { DTOLogger } from '../utils/utils';
+import { validator } from '../utils/utils'; 
 
 class ProductController{
-    //validate input data
-    private async validator(errors:{}){
-        const error = await validate(errors);
-        DTOLogger(error);
-    }
+
     
     createProduct = async(req: Request, res: Response, next: NextFunction)=>{
         const payload = new CreateProductDTO(req.body);
-        this.validator(payload)
+        await validator(payload)
         const result = await Factory.createProduct(payload.product_type,{
             ...payload,
             product_shop: req.user.userId
@@ -28,7 +23,7 @@ class ProductController{
 
     updateProduct = async(req: Request, res: Response, next: NextFunction)=>{
         const payload = new UpdateProductDTO(req.body);
-        this.validator(payload)
+        await validator(payload)
         const result = await Factory.updateProduct(payload.product_type, req.params.productId, {
             ...payload,
             product_shop: req.user.userId
