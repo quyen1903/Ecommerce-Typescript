@@ -36,18 +36,6 @@ class AccessService{
         });
     }
 
-    private static logger(errors: ValidationError[]){
-        errors.forEach((error)=>{
-            console.log(`Property: ${error.property}`);
-            if(error.constraints){
-                Object.keys(error.constraints).forEach((key)=>{
-                    console.log(`- ${error.constraints![key]}`);
-                    throw new BadRequestError(`- ${error.constraints![key]}`)
-                })
-            }
-        })
-    }
-
     private static async findShop( email: string ){
         return await Shop.findOne({email}).select( {email:1, password:1, salt:1}).lean()
     };
@@ -106,10 +94,7 @@ class AccessService{
             4 - generate tokens
             5 - get data return login
         */
-       const errors = await validate(login)
-       if(errors.length > 0){
-        this.logger(errors)
-       }
+
         // 1
         const foundShop = await this.findShop(login.email)
         if(!foundShop) throw new BadRequestError('Shop not registed');
@@ -151,10 +136,7 @@ class AccessService{
          * 5 - create public/private key pair and access/refresh token pair
          * 6 - create keytoken which store publickey and refresh token in database
         */
-        const errors = await validate(register);
-        if (errors.length > 0) {
-            this.logger(errors)
-        } 
+
         //1
         const shopHolder = await this.findShop(register.email);
         if(shopHolder) throw new BadRequestError('Shop already existed');

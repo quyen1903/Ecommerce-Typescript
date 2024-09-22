@@ -7,7 +7,6 @@ enum Applies_to{
 }
 
 export class CreateDiscountDTO{
-
     @IsNotEmpty()
     @IsString()
     name: string;
@@ -27,7 +26,7 @@ export class CreateDiscountDTO{
     @IsString()
     code: string;
 
-    @IsInt()
+    @IsNumber()
     @IsNotEmpty()
     max_value: number
 
@@ -115,7 +114,7 @@ export class CreateDiscountDTO{
         this.type=type,
         this.value=value,
         this.code=code,
-        this. max_value=max_value,
+        this.max_value=max_value,
         this.start_date=start_date,
         this.end_date=end_date,
         this.max_uses=max_uses,

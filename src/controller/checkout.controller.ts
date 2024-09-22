@@ -30,7 +30,6 @@ class CheckoutController{
             metadata: await CheckoutService.checkoutReview(req.body)
         }).send(res)
     }
-
 }
 
 

@@ -16,7 +16,7 @@ export class RegisterDTO {
     @IsNotEmpty()
     password: string;
 
-    constructor(name: string, email: string, password: string) {
+    constructor({name, email, password}:{name: string, email: string, password: string}) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -30,7 +30,7 @@ export class LoginDTO{
     @IsNotEmpty()
     password: string;
 
-    constructor(email: string, password: string) {
+    constructor({email, password}:{email: string, password: string}) {
         this.email = email;
         this.password = password;
     }

@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import AccessService from '../services/access.service';
 import { SuccessResponse } from '../core/success.response';
 import { RegisterDTO, LoginDTO } from '../dto/access.dto';
-import { validate } from 'class-validator'; 
-import { BadRequestError } from '../core/error.response';
+import { validator } from '../utils/utils';
 
 class AccessController{
     //in register and login, we pass data from request body tp data transfer object (DTO)
@@ -25,22 +24,24 @@ class AccessController{
         }).send(res)
     }
     login = async(req: Request, res: Response, next: NextFunction)=>{
-        console.log('this is user',req.headers)
-        const {email, password} = req.body;
-        const login = new LoginDTO(email, password);
+        const payload = new LoginDTO(req.body);
+        await validator(payload)
+        const result =await AccessService.login(payload)
 
         new SuccessResponse({
             message: 'login success',
-            metadata:await AccessService.login(login)
+            metadata: result 
         }).send(res)
     }
     register = async (req: Request, res: Response, next: NextFunction) => {
-        const {name, email, password} = req.body;
-        const register = new RegisterDTO(name, email, password);
+        const payload = new RegisterDTO(req.body);
+        await validator(payload)
 
+        const result = await AccessService.register(payload)
+        
         new SuccessResponse({
             message: 'register success',
-            metadata: await AccessService.register(register)
+            metadata: result
         }).send(res);
     }
 

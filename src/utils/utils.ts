@@ -1,8 +1,62 @@
-'use strict'
-import _, { Object } from'lodash'
-import { Types } from 'mongoose'
+import _, { Object } from'lodash';
+import { Types } from 'mongoose';
+import { validate,ValidationError } from 'class-validator';
+import { BadRequestError } from '../core/error.response';
 
-export const convertToObjectIdMongodb = (id: string): Types.ObjectId => new Types.ObjectId(id)
+export const convertToObjectIdMongodb = (id: string): Types.ObjectId => new Types.ObjectId(id);
+
+export function DTOLogger(errors: ValidationError[]){
+    errors.forEach((error)=>{
+        console.log(`Property: ${error.property}`);
+        if(error.constraints){
+            Object.keys(error.constraints).forEach((key)=>{
+                console.log(`- ${error.constraints![key]}`);
+                throw new BadRequestError(`- ${error.constraints![key]}`)
+            })
+        }
+    })
+}
+  
+function collectValidationKeys(error: ValidationError): string[] {
+    let keys: string[] = [];
+
+    // Add the current property's key if it exists
+    if (error.property) {
+        keys.push(error.property);
+    }
+
+    // Check if the error has children
+    if (error.children && error.children.length > 0) {
+        for (const child of error.children) {
+            // Recursively collect keys from children
+            keys = keys.concat(collectValidationKeys(child));
+        }
+    }
+
+    return keys;
+}
+
+// Modified validator function to handle validation and log errors
+export async function validator(input: {}): Promise<void> {
+    const errors = await validate(input, {
+        // skipMissingProperties: false, // Ensure all required fields are validated
+        // whitelist: true,              // Strip unknown properties
+        // forbidNonWhitelisted: true,    // Throw error for unknown properties
+        // forbidUnknownValues: true,     // Forbid any value that doesn't match the expected type
+    });
+
+    if (errors.length > 0) {
+        // Collect all constraint keys from the validation errors
+        const allKeys: string[] = errors.flatMap(error => collectValidationKeys(error));
+        const uniqueKeys = Array.from(new Set(allKeys)); // Remove duplicates
+
+        // Construct error message
+        const errorMessage = `Validation errors on properties: ${uniqueKeys.join(', ')}`;
+        console.log(`Validation error: ${errorMessage}`);
+        throw new BadRequestError(errorMessage); // Throw an error with all constraint keys
+    }
+}
+  
 
 export const getInfoData = (field: string[],object: object)=>{
     return _.pick(object,field)
@@ -84,3 +138,22 @@ export const flattenNestedObject =(object: Record<string, any>): Record<string, 
     })
     return final
 }
+
+export const flattenNestedArray = (array: Array<any>|undefined): Array<any> => {
+    const result: Array<any> = [];
+
+    array!.forEach(item => {
+        if (Array.isArray(item)) {
+            // Recursively flatten any nested arrays
+            result.push(...flattenNestedArray(item));
+        } else if (typeof item === 'object' && item !== null) {
+            // If the item is an object, push it into the result
+            result.push(item);
+        } else {
+            // If the item is not an object, just push it as is
+            result.push(item);
+        }
+    });
+
+    return result;
+};

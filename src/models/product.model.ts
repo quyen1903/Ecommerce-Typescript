@@ -1,5 +1,7 @@
 import { model, Schema, Types, Document } from 'mongoose'; 
 //product and clothing, electronic and furniture are seperate document.
+const DOCUMENT_NAME='Product';
+const COLLECTION_NAME='Products';
 
 export interface IClothing extends Document{
     _id: Types.ObjectId;
@@ -41,9 +43,6 @@ export interface IProduct extends Document{
     isDraft: boolean;
     isPublished: boolean;
 }
-
-const DOCUMENT_NAME='Product'
-const COLLECTION_NAME='Products'
 
 const productSchema: Schema = new Schema<IProduct>({
     product_name:{ type:String, required:true},

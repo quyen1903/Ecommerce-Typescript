@@ -1,58 +1,49 @@
 import { Request, Response, NextFunction } from 'express'; 
 import { SuccessResponse } from '../core/success.response';
 import CartService from '../services/cart.service';
-
-export interface ICartRequest{
-    userId: string;
-    product:ICartProduct;
-    shop_order_ids:{
-        shopId: string,
-        item_products:{
-            quantity: number,
-            price: number,
-            shopId: string,
-            old_quantity: number,
-            productId: string
-        }[]
-    }[];
-    productId: string
-};
-
-export interface ICartProduct{
-    productId: string,
-    shopId: string,
-    quantity: number,
-    name: string,
-    price: number
-}
+import { AddCart, DeleteCart, UpdateCart } from '../dto/cart.dto';
+import { validator } from '../utils/utils';
 
 class CartController{
+    async addToCart(req: Request, res: Response, next: NextFunction) {
+        const payload = new AddCart(req.body);
+        await validator(payload)
+        const result = await CartService.addToCart(payload);
 
-    addToCart = async function(req: Request, res: Response, next: NextFunction){
         new SuccessResponse({
-            message:'Add new product to cart success',
-            metadata: await CartService.addToCart(req.body)
-        }).send(res)
+            message: 'Add new product to cart success',
+            metadata: result
+        }).send(res);
+
     }
 
-    update = async function(req: Request, res: Response, next: NextFunction){
+    async update (req: Request, res: Response, next: NextFunction){
+        const payload = new UpdateCart(req.body);
+        await validator(payload)
+        const result = await CartService.update(payload);
+
         new SuccessResponse({
-            message:'update Cart Success',
-            metadata: await CartService.update(req.body)
-        }).send(res)
+            message: 'Update cart success',
+            metadata: result
+        }).send(res);
+
     }
 
-    delete = async function(req: Request, res: Response, next: NextFunction){
+    async delete (req: Request, res: Response, next: NextFunction){
+        const payload = new DeleteCart(req.body)
+        await validator(payload)
+        const result = await CartService.deleteUserCart(payload)
+
         new SuccessResponse({
             message:'delete Cart Success',
-            metadata: await CartService.deleteUserCart(req.body)
+            metadata: result
         }).send(res)
     }
     
-    listToCart = async function(req: Request, res: Response, next: NextFunction){
+    async listToCart(req: Request, res: Response, next: NextFunction){
         new SuccessResponse({
             message:'Get list Cart Success',
-            metadata: await CartService.getListUserCart(req.query as unknown as ICartRequest)
+            metadata: await CartService.getListUserCart(req.query as unknown as AddCart)
         }).send(res)
     }
 }

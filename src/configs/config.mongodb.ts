@@ -31,5 +31,4 @@ const pro: Config = {
 const config = { dev,pro };
 type Enviroment = 'dev' | 'pro';
 const env: Enviroment = (process.env.NODE_ENV as Enviroment) || 'dev';
-console.log("process.env.NODE_ENV",process.env.NODE_ENV)
 export default config[env]
