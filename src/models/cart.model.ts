@@ -20,7 +20,7 @@ const productSchema: Schema = new Schema<Product>({
     price: {type: Number}
 })
 export interface ICartModel extends Document{
-    cart_state: string;
+    cart_state: 'active'| 'complete'| 'fail' | 'pending'
     cart_products: Product[];
     cart_count_product: number;
     cart_userId: number

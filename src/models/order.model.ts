@@ -9,7 +9,7 @@ export interface IOrderModel extends Document{
     order_payment: {};
     order_product: Schema.Types.Array;
     order_trackingNumber: string ;
-    order_status: string
+    order_status: 'pending'| 'confirmed'| 'shipped'| 'cancelled'| 'delivered'
 }
 
 const orderSchema: Schema = new Schema<IOrderModel>({

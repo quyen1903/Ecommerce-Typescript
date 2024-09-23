@@ -20,7 +20,7 @@ export interface IdiscountModel extends Document{
     discount_min_order_value: number,
     discount_shopId: Types.ObjectId
     discount_is_active: boolean;
-    discount_applies_to: string;
+    discount_applies_to: 'all'| 'specific';
     discount_product_ids: string[]
 }
 

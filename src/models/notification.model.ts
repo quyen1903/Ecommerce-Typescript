@@ -4,7 +4,7 @@ const DOCUMENT_NAME='Notification'
 const COLLECTION_NAME='Notifications'
 
 interface INotificationModel extends Document{
-    noti_type: string;
+    noti_type: 'ORDER-001'| 'ORDER-002'| 'PROMOTION-001'| 'SHOP-001'
     noti_senderId: string;
     noti_receivedId: string;
     noti_content: string;
