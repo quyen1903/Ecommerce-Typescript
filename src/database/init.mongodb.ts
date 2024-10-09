@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import config from "../configs/config.mongodb"
-import CheckConnect from "../helper/check.connect";
+import CheckConnect from "../shared/helper/check.connect";
 const { host, port, name } = config.db;
 const connectString = `mongodb://${host}:${port}/${name}`
+console.log(connectString)
 
 class Database{
     private static instance: Database;

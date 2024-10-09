@@ -1,7 +1,7 @@
 import JWT from 'jsonwebtoken'
 import { Types } from 'mongoose'
 import { BadRequestError } from '../core/error.response'
-import asyncHandler from '../helper/async.handler'
+import asyncHandler from '../shared/helper/async.handler'
 import { Request, Response, NextFunction } from 'express'
 import { AuthFailureError, NotFoundError } from '../core/error.response'
 import  KeyTokenService  from '../services/keyToken.service'

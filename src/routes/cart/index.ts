@@ -1,6 +1,6 @@
 import express from 'express';
 import  CartController from '../../controller/cart.controller';
-import asyncHandler from '../../helper/async.handler';
+import asyncHandler from '../../shared/helper/async.handler';
 const router = express.Router();
 
 router.post('',asyncHandler(CartController.addToCart))

@@ -37,4 +37,4 @@ const userSchema: Schema = new Schema<IUser>({
     timestamps: true,
     collection: COLLECTION_NAME
 })
-module.exports = model (DOCUMENT_NAME, userSchema)
+export default model<IUser>(DOCUMENT_NAME, userSchema)

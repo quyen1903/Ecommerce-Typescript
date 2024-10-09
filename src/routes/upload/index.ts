@@ -1,6 +1,6 @@
 import express from 'express';
 import uploadController from '../../controller/upload.controller';
-import asyncHandler from '../../helper/async.handler';
+import asyncHandler from '../../shared/helper/async.handler';
 import { uploadDisk } from '../../configs/config.multer'
 
 const router = express.Router();

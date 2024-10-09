@@ -10,10 +10,9 @@ const uploadImageFromURL = async ()=>{
             public_id: newFileName,
             folder: folderName
         })
-        console.log(result)
         return result
     } catch (error) {
-        console.error('upload image error ', error)
+        console.error('upload image URL error ', error)
     }
 }
 
@@ -36,7 +35,7 @@ const uploadImageFromLocal = async({path, folderName = 'product/8409'}:
             })
         }
     } catch (error) {
-        
+        console.error('upload image locals error ', error)
     }
 }
 export {

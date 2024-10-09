@@ -1,6 +1,6 @@
 import express from 'express';
 import NotificationController from '../../controller/notification.controller';
-import asyncHandler from '../../helper/async.handler';
+import asyncHandler from '../../shared/helper/async.handler';
 import { authentication } from '../../auth/authUtils';
 const router = express.Router();
 

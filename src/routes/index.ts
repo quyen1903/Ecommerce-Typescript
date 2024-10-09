@@ -10,6 +10,8 @@ import discount from './discount'
 import inventory from './inventory'
 import notification from './notification'
 import product from './product'
+import profile from './profile';
+import rbac from './rbac'
 import upload from './upload'
 
 const router = express.Router();
@@ -25,6 +27,8 @@ router.use('/v1/api/discount', discount)
 router.use('/v1/api/inventory', inventory);
 router.use('/v1/api/notification', notification);
 router.use('/v1/api/product', product);
+router.use('/v1/api/profile', profile);
+router.use('/v1/api/rbac', rbac)
 router.use('/v1/api/upload',upload)
 router.use('/v1/api', access);
 

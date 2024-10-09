@@ -2,6 +2,7 @@ import {
 	ReasonPhrases,
 	StatusCodes
 } from 'http-status-codes';
+import myLogger from '../middleware/mylogger.log'
 
 class ErrorResponse extends Error{
     status: number
@@ -9,6 +10,8 @@ class ErrorResponse extends Error{
         super(message),
         this.status = status
         Error.captureStackTrace(this,this.constructor)
+        //log error winston
+        myLogger.error(this.message,{context:'/path', requestId: 'ABCDEF', message:this.message, metadata:{}})
     }
 }
 

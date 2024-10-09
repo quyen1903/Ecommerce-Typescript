@@ -5,13 +5,25 @@ import helmet from "helmet";
 import morgan from 'morgan';
 import 'reflect-metadata';
 
-
-
 import instanceMongodb from "./database/init.mongodb";
 import router from './routes';
-import CheckConnect from './helper/check.connect';
+import { IKeyToken } from './models/keytoken.model';
+import { IdecodeUser } from './auth/authUtils';
+import { Iapikey } from './models/apikey.model';
+import CheckConnect from './shared/helper/check.connect';
 import productTest from "./test/product.test"
 import inventoryTest from './test/inventory.test';
+
+declare global{
+    namespace Express{   
+        interface Request {
+            keyStore: IKeyToken;
+            user: IdecodeUser;
+            refreshToken: string;
+            apiKey: Iapikey
+        }
+    }
+}
 
 const app: Express = express();
 

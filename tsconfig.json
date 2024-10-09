@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "types": ["./custom.d.ts"],
     "target": "es2023",
     "module": "commonjs",
     "outDir": "./dist",
@@ -11,11 +10,11 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
-    "sourceMap": true
+    "sourceMap": true,
+    "incremental": true
   },
   "include": [
     "./src/**/*",
-    "./custom.d.ts",
     "./server.ts"
   ]
 }

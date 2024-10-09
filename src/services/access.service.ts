@@ -144,8 +144,6 @@ class AccessService{
         //2
         const salt = crypto.randomBytes(32).toString();
         const passwordHashed =await this.hashPassword(register.password, salt)
-        console.log('this is password hashed',passwordHashed)
-
         //3
         const newShop = await Shop.create({
             name: register.name,
