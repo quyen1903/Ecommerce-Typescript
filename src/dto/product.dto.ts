@@ -11,7 +11,6 @@ import {
 import { Clothing } from './product/clothing.products';
 import { Electronics } from './product/electronic.products';
 import { Furniture } from './product/furniture.products';
-import { BadRequestError } from '../core/error.response';
 
 enum ProductType {
     CLOTHING = 'Clothing',
@@ -19,36 +18,6 @@ enum ProductType {
     FURNITURE = 'Furniture',
 }
 
-class Factory {
-    // Registry to hold product types and their corresponding DTO classes
-    private static productRegistry: { [key: string]: typeof CreateProductDTO } = {};
-  
-    // Register a product type with its DTO class
-    static registerProductType(type: string, classReference: typeof CreateProductDTO) {
-      Factory.productRegistry[type] = classReference;
-    }
-  
-    // Create a product and validate it based on the product type
-    static async createProduct(type: CreateProductDTO['product_type'], payload: any) {
-      const productClass = Factory.productRegistry[type];
-      
-      // Check if the product type is registered
-      if (!productClass) throw new BadRequestError(`Invalid Product Type: ${type}`);
-  
-      // Instantiate the DTO class with payload
-      const productInstance = new productClass(payload);
-  
-      // Validate the product attributes (class-validator validation)
-      const errors = await validate(productInstance);
-      if (errors.length > 0) {
-        throw new BadRequestError('Validation failed for product attributes');
-      }
-  
-      return productInstance;
-    }
-  }
-  
-  
 export class CreateProductDTO {
     @IsNotEmpty()
     @IsString()
@@ -106,7 +75,6 @@ export class CreateProductDTO {
     }
 }
   
-
 export class UpdateProductDTO {
     @IsOptional()
     @IsString()
@@ -163,13 +131,3 @@ export class UpdateProductDTO {
     }
     
 }
-
-const registProduct = [
-    {type: 'Clothing', class: Clothing},
-    {type: 'Electronics', class: Electronics},
-    {type: 'Furniture', class: Furniture}
-]
-
-registProduct.forEach((element: any)=>{
-    Factory.registerProductType(element.type, element.class)
-})

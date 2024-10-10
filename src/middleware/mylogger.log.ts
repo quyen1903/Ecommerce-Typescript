@@ -1,5 +1,6 @@
 import { createLogger, format,level, transports }  from 'winston';
 import 'winston-daily-rotate-file';
+import { v4 as uuidv4 } from 'uuid';
 
 const { combine, timestamp, printf, align } = format; 
 
@@ -16,7 +17,7 @@ class MyLogger{
             transports:[
                 new transports.Console(),
                 new transports.DailyRotateFile({
-                    dirname:'src/logs',
+                    dirname:'logs',
                     filename: 'application-%DATE%.log',
                     datePattern: 'YYYY-MM-DD-HH-mm',
                     zippedArchive: true,
@@ -26,7 +27,7 @@ class MyLogger{
                     level: 'info',
                 }),
                 new transports.DailyRotateFile({
-                    dirname:'src/logs',
+                    dirname:'logs',
                     filename: 'application-%DATE%.log',
                     datePattern: 'YYYY-MM-DD-HH-mm',
                     zippedArchive: true,
@@ -38,13 +39,25 @@ class MyLogger{
             ]
         })
     }
+    commonParams(params: []| {}){
+        let context, req, metadata;
+        if(!Array.isArray(params)) context = params
+        else [context, req, metadata] = params
+
+        const requestId = req.requestId || uuidv4()
+        return {
+            requestId, context, metadata
+        }
+    }
     log(message: string, params: {}){
-        const logObject = Object.assign({message}, params)
+        const paramsLog = this.commonParams(params)
+        const logObject = Object.assign({message}, paramsLog)
         this.logger.info(logObject)
     }
     error(message: string, params: {}){
-        const logObject = Object.assign({message}, params)
-        this.logger.error(logObject)
+        const paramsLog = this.commonParams(params)
+        const logObject = Object.assign({message}, paramsLog)
+        this.logger.info(logObject)
     }
 }
 export default new MyLogger()

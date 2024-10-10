@@ -10,8 +10,7 @@ class ErrorResponse extends Error{
         super(message),
         this.status = status
         Error.captureStackTrace(this,this.constructor)
-        //log error winston
-        myLogger.error(this.message,{context:'/path', requestId: 'ABCDEF', message:this.message, metadata:{}})
+        //log error winston        
     }
 }
 

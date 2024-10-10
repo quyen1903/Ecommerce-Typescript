@@ -13,6 +13,9 @@ import { Iapikey } from './models/apikey.model';
 import CheckConnect from './shared/helper/check.connect';
 import productTest from "./test/product.test"
 import inventoryTest from './test/inventory.test';
+import { v4 as uuidv4 } from 'uuid';
+
+import myLogger from './middleware/mylogger.log';
 
 declare global{
     namespace Express{   
@@ -21,6 +24,7 @@ declare global{
             user: IdecodeUser;
             refreshToken: string;
             apiKey: Iapikey
+            requestId: string
         }
     }
 }
@@ -35,6 +39,17 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended:true
 }));
+
+app.use((req: Request, res: Response, next: NextFunction)=>{
+    const requestId = req.headers['x-request-id'] as string
+    req.requestId = requestId ? requestId : uuidv4()
+    myLogger.log(`input params ${req.method}`,[
+        req.path,
+        {requestId: req.requestId},
+        req.method === 'POST' ? req.body : req.query
+    ])
+    next()
+})
 
 /*
     redis pubsub
@@ -61,6 +76,12 @@ interface CustomError extends Error {
 
 app.use((error: CustomError, req: Request ,res: Response, next: NextFunction)=>{
     const statusCode = error.status || 500
+    const resMessage = `${error.status} - ${Date.now}ms Response: ${JSON.stringify(error)}`;
+    myLogger.error(resMessage, [
+        req.path,
+        {requestId: req.requestId},
+        {message: error.message}
+    ])
     return res.status(statusCode).json({
         status:'error',
         code:statusCode,
