@@ -7,7 +7,7 @@ export interface IClothing extends Document{
     _id: Types.ObjectId;
     brand: string;
     size: string;
-    material: string,
+    material: string;
     product_shop: Types.ObjectId;
 };
 

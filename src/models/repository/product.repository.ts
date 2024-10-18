@@ -15,7 +15,7 @@ interface queries{
 
 const queryProduct = async (query: any, limit: number, skip: number)=>{
     return await product.find(query)
-    .populate('product_shop', 'name email -_id')
+    .populate('product_shop', 'name email _id')
     .sort({updateAt: -1})
     .skip(skip)
     .limit(limit)

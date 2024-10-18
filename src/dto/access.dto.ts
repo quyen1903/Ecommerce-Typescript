@@ -1,19 +1,16 @@
-import { IsNotEmpty, IsEmail, IsString, MinLength, MaxLength } from 'class-validator';
-
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { UsernameValidator } from "../shared/validators/username.validator";
+import { PasswordValidator } from "../shared/validators/password.validator";
 export class RegisterDTO {
-    @MaxLength(20)
-    @IsNotEmpty()
-    @IsString()
+    @UsernameValidator()
     name: string;
 
     @IsEmail()
     @IsNotEmpty()
     @IsString()
     email: string;
-
-    @IsString()
-    @MinLength(6)
-    @IsNotEmpty()
+    
+    @PasswordValidator()
     password: string;
 
     constructor({name, email, password}:{name: string, email: string, password: string}) {
@@ -23,15 +20,18 @@ export class RegisterDTO {
     }
 }
 
-export class LoginDTO{
+export class LoginDTO {
+    @IsEmail()
     @IsNotEmpty()
+    @IsString()    
     email: string;
-
-    @IsNotEmpty()
+  
+    @PasswordValidator()
     password: string;
 
-    constructor({email, password}:{email: string, password: string}) {
+    constructor({email, password}:{email: string, password: string}){
         this.email = email;
         this.password = password;
     }
 }
+  
