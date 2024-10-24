@@ -27,6 +27,25 @@ class SuccessResponse{
     }
 }
 
+class ErrorResponse{
+    message: string;
+    status: number;
+    metadata: any;
+    constructor({
+        message,
+        statusCode = StatusCodes.OK,
+        reasonStatusCode=ReasonPhrases.OK,
+        metadata = {} 
+    }: SuccessResponseProperties){
+        this.message = message || reasonStatusCode
+        this.status = statusCode
+        this.metadata = metadata
+    }
+    send(res: Response){
+        return res.status(this.status).json(this)
+    }
+}
+
 class OK extends SuccessResponse{
     constructor({message,metadata = {} }: SuccessResponseProperties){
         super({message,metadata})
@@ -51,4 +70,4 @@ class CREATED extends SuccessResponse{
     }   
 }
 
-export { OK, CREATED, SuccessResponse }
+export { OK, CREATED, SuccessResponse, ErrorResponse }
