@@ -5,10 +5,10 @@ class RedisPubSubService {
     private publisher!: RedisClientType;
     private initializationPromise: Promise<void>;
     private redisString = {
-        password: process.env.REDIS_PASSWORD as string,
+        password: process.env.REDIS_PASSWORD,
         socket: {
-            host: process.env.REDIS_HOST as string,
-            port: 16457
+            host: process.env.REDIS_HOST,
+            port: Number(process.env.REDIS_PORT),
         }
     };
 

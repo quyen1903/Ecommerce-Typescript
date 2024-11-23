@@ -7,6 +7,7 @@ const router = express.Router();
 router.get('/search/:keySearch',asyncHandler(productController.getListSearchProduct))
 router.get('',asyncHandler(productController.findAllProducts))
 router.get('/:product_id',asyncHandler(productController.findProduct))
+router.get('/sku/select_variation',asyncHandler(productController.findOneSku))
 
 router.use(authentication);
 
@@ -14,6 +15,7 @@ router.patch('/:productId',asyncHandler(productController.updateProduct));
 router.post('/publish/:id',asyncHandler(productController.pubishProductByShop));
 router.post('/unpublish/:id',asyncHandler(productController.unpublishProductByShop));
 router.post('',asyncHandler(productController.createProduct));
+router.post('/spu/new',asyncHandler(productController.createSpu));
 router.get('/drafts/all',asyncHandler(productController.getAllDraftForShop));
 router.get('/published/all',asyncHandler(productController.getAllPublishForShop));
 

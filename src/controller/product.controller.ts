@@ -2,10 +2,35 @@ import { Request, Response, NextFunction } from 'express';
 import { SuccessResponse } from '../core/success.response';
 import Factory from '../services/product.service';
 import { CreateProductDTO, UpdateProductDTO } from '../dto/product.dto';
-import { validator } from '../utils/utils'; 
+import { validator } from '../utils/utils';
+import { newSpu } from '../services/spu.service';
+import { oneSku } from '../services/sku.service';
 
 class ProductController{
+    //SKU, SPU
+    createSpu = async(req: Request, res: Response, next: NextFunction)=>{
+        try {
+            const spu = await newSpu({...req.body, product_shop: req.user.userId})
+            new SuccessResponse({
+                message: 'create success SPU',
+                metadata: spu
+            }).send(res)
+        } catch (error) {
+            next(error)
+        }
+    }
 
+    findOneSku = async(req: Request, res: Response, next: NextFunction)=>{
+        try {
+            const {sku_id, product_id} = req.query as {sku_id: string, product_id: string}
+            new SuccessResponse({
+                message: 'get sku one',
+                metadata: await oneSku({sku_id,product_id})
+            }).send(res)
+        } catch (error) {
+            
+        }
+    }
     
     createProduct = async(req: Request, res: Response, next: NextFunction)=>{
         const payload = new CreateProductDTO(req.body);

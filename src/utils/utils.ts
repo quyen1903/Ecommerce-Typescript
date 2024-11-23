@@ -152,3 +152,7 @@ export const flattenNestedArray = (array: Array<any>|undefined): Array<any> => {
 
     return result;
 };
+
+export function randomProductId(){
+    return Math.floor(Math.random()* 899999 + 1000000)
+}

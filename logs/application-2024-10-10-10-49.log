@@ -1,4 +1,0 @@
-2024-10-10 10:49:08::info::/v1/api/shop/login::1233::input params POST::{"email":"ricon@gmail.com","password":"abc12389"}
-2024-10-10 10:49:08::info::/v1/api/shop/login::1233::401 - function now() { [native code] }ms Response: {"status":401}::{"message":"Wrong password!!!"}
-2024-10-10 10:49:40::info::/v1/api/product/::1706::input params POST::{"product_thumb":"macbook M3 màu bạc 36GB Ram","product_description":"Thích hợp cho tất cả người dùng dù giá hơi chát","product_price":90000000,"product_quantity":10,"product_type":"Electronics","product_attributes":{"manufacturer":"Apple INC","model":"M3","color":"Silver"}}
-2024-10-10 10:49:40::info::/v1/api/product/::1706::400 - function now() { [native code] }ms Response: {"status":400}::{"message":"Validation errors on properties: product_name"}

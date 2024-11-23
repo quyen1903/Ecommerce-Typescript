@@ -1,10 +1,10 @@
-import Client from "ioredis";
+import { Redis } from "ioredis";
 import Redlock,{Lock} from "redlock";
 import { reservationInventory } from'../models/repository/inventory.repository';
-const redisClient = new Client({
-    password: process.env.REDIS_PASSWORD as string,
-    host: process.env.REDIS_HOST as string,
-    port: 16457
+const redisClient = new Redis({
+    password: process.env.REDIS_PASSWORD ,
+    host: process.env.REDIS_HOST,
+    port: Number(process.env.REDIS_PORT),
 });
 
 redisClient.on('error', (error: Error) => {

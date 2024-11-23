@@ -199,7 +199,6 @@ class DiscountService{
 
     static async cancelDiscountCode({ codeId, shopId, userId }:AmountDiscountDTO){
         const foundDiscount = await checkDiscountExists({
-            model:discount,
             filter:{
                 discount_code:codeId,
                 discount_shopId:convertToObjectIdMongodb(shopId)
